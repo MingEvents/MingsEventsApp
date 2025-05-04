@@ -1,4 +1,4 @@
-package com.example.mingseventsapp.login
+package com.example.mingseventsapp.layouts.login
 
 import LoginViewModel
 import android.os.Bundle
@@ -33,7 +33,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import com.example.mingseventsapp.AppNavHost
 import com.example.mingseventsapp.R
+import com.example.mingseventsapp.Routes
 
 
 class LoginActivity : ComponentActivity() {
@@ -41,19 +44,13 @@ class LoginActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-           putBackground {
-               loginScreen(
-                   onNavigateToRegister = {
-                       // Logearse nuevo usuario
-                   }
-               )
-           }
+            AppNavHost()
         }
     }
 }
 
 @Composable
-fun putBackground(content: @Composable () -> Unit) {
+fun PutBackground(content: @Composable () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -64,9 +61,18 @@ fun putBackground(content: @Composable () -> Unit) {
 }
 
 @Composable
-fun loginScreen(viewModel: LoginViewModel = viewModel(),
-                onNavigateToRegister: () -> Unit) {
+fun LoginScreen(viewModel: LoginViewModel = viewModel(),
+                onNavigateToRegister: () -> Unit,
+                navController: NavHostController,) {
     val state by viewModel.formState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.navigateToMenu.collect {
+            navController.navigate(Routes.MENU) {
+                popUpTo(Routes.LOGIN) { inclusive = true }
+            }
+        }
+    }
 
     if (state.isLoading) {
         Box(

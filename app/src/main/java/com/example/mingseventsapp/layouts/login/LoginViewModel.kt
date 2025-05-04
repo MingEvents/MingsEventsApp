@@ -1,9 +1,13 @@
 // LoginViewModel.kt
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
+import com.example.mingseventsapp.Routes
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
 data class LoginFormState(
@@ -16,6 +20,9 @@ data class LoginFormState(
 class LoginViewModel : ViewModel() {
     private val _formState = MutableStateFlow(LoginFormState())
     val formState: StateFlow<LoginFormState> = _formState
+
+    private val _navigateToMenu = MutableSharedFlow<Unit>()
+    val navigateToMenu = _navigateToMenu.asSharedFlow()
 
     fun setEmail(email: String) {
         _formState.value = _formState.value.copy(email = email)
@@ -32,6 +39,7 @@ class LoginViewModel : ViewModel() {
 
             if (_formState.value.email == "admin@example.com" && _formState.value.password == "1234") {
                 _formState.value = _formState.value.copy(error = null)
+                _navigateToMenu.emit(Unit)
 
             } else {
                 _formState.value = _formState.value.copy(error = "Credenciales incorrectas")
