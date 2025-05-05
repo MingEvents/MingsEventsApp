@@ -1,5 +1,7 @@
 package com.example.mingseventsapp.layouts.pages
 
+import android.annotation.SuppressLint
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -12,11 +14,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
@@ -25,6 +30,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,6 +42,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.window.Dialog
+import coil.compose.AsyncImage
 import com.example.mingseventsapp.model.event.Event
 
 
@@ -46,10 +55,11 @@ fun EventPagePreview() {
 }
 
 
+@SuppressLint("MutableCollectionMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EventPage() {
-    var events = listOf(
+    var events = mutableListOf(
         Event(
             event_id = 1,
             name = "Festival de Música",
@@ -87,10 +97,10 @@ fun EventPage() {
             establish_id = 3
         ),
         Event(
-            event_id = 3,
-            name = "Conferencia de Tecnología",
-            price = 150,
-            reserved_places = 250,
+            event_id = 4,
+            name = "Final champions Barça vs Arsenal",
+            price = 1050,
+            reserved_places = 1250,
             photo = "",
             start_date = "2025-08-20",
             end_date = "2025-08-21",
@@ -99,10 +109,10 @@ fun EventPage() {
             establish_id = 3
         ),
         Event(
-            event_id = 3,
-            name = "Conferencia de Tecnología",
-            price = 150,
-            reserved_places = 250,
+            event_id = 5,
+            name = "Concierto Trueno y BadGyal",
+            price = 350,
+            reserved_places = 650,
             photo = "",
             start_date = "2025-08-20",
             end_date = "2025-08-21",
@@ -110,72 +120,15 @@ fun EventPage() {
             descripcion = "Innovación, IA, y futuro digital.",
             establish_id = 3
         ),
-        Event(
-            event_id = 3,
-            name = "Conferencia de Tecnología",
-            price = 150,
-            reserved_places = 250,
-            photo = "",
-            start_date = "2025-08-20",
-            end_date = "2025-08-21",
-            seating = 400,
-            descripcion = "Innovación, IA, y futuro digital.",
-            establish_id = 3
-        ),
-        Event(
-            event_id = 3,
-            name = "Conferencia de Tecnología",
-            price = 150,
-            reserved_places = 250,
-            photo = "",
-            start_date = "2025-08-20",
-            end_date = "2025-08-21",
-            seating = 400,
-            descripcion = "Innovación, IA, y futuro digital.",
-            establish_id = 3
-        ),
-        Event(
-            event_id = 3,
-            name = "Conferencia de Tecnología",
-            price = 150,
-            reserved_places = 250,
-            photo = "",
-            start_date = "2025-08-20",
-            end_date = "2025-08-21",
-            seating = 400,
-            descripcion = "Innovación, IA, y futuro digital.",
-            establish_id = 3
-        ),
-        Event(
-            event_id = 3,
-            name = "Conferencia de Tecnología",
-            price = 150,
-            reserved_places = 250,
-            photo = "",
-            start_date = "2025-08-20",
-            end_date = "2025-08-21",
-            seating = 400,
-            descripcion = "Innovación, IA, y futuro digital.",
-            establish_id = 3
-        ),
-        Event(
-            event_id = 3,
-            name = "Conferencia de Tecnología",
-            price = 150,
-            reserved_places = 250,
-            photo = "",
-            start_date = "2025-08-20",
-            end_date = "2025-08-21",
-            seating = 400,
-            descripcion = "Innovación, IA, y futuro digital.",
-            establish_id = 3
-        )
     )
+
+    var filteredEvents by remember { mutableStateOf(events.toMutableList()) }
+
     var searchString by remember { mutableStateOf("") }
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFD7E9FC)),
+            .background(Color(0xFFd7e9fc)),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -201,7 +154,13 @@ fun EventPage() {
     ) {
         SearchBar (
             query = searchString,
-            onQueryChange = { searchString = it },
+            onQueryChange = {
+                searchString = it
+                searchString = it
+                filteredEvents = events.filter { e ->
+                    e.name.contains(it, ignoreCase = true)
+                }.toMutableList()
+                            },
             onSearch = {},
             active = false,
             onActiveChange = {},
@@ -209,10 +168,7 @@ fun EventPage() {
             modifier = Modifier
                 .fillMaxWidth(),
             placeholder = { Text("Search events") }
-        ) {
-
-
-        }
+        ) {}
     }
 
     LazyColumn(
@@ -223,7 +179,7 @@ fun EventPage() {
         item {
             Spacer(modifier = Modifier.height(10.dp))
         }
-        items(events) { event ->
+        items(filteredEvents) { event ->
             EventItem(event)
         }
 
@@ -238,32 +194,94 @@ fun EventItem(event: Event) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .background(Color(0xFFD7E9FC)),
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(4.dp),
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = event.name, fontSize = 20.sp, color = Color.Black)
-            Text(text = "Price: $${event.price}", fontSize = 16.sp, color = Color.DarkGray)
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFF7796CB)
+                                        )
+        ) {
+        Row (
+            modifier = Modifier.fillMaxWidth()
+            ) {
+            Column(modifier = Modifier
+            .padding(16.dp)
+            .weight(1f)
+                  ) {
+            Text(
+                text = event.name,
+                fontSize = 20.sp,
+                color = Color.White,
+                modifier = Modifier
+                    .padding(top = 3.dp, bottom = 15.dp)
+                )
+            Text(
+                text = "Price: $${event.price}",
+                fontSize = 16.sp,
+                color = Color.White,
+                modifier = Modifier
+                    .padding(bottom = 5.dp)
+                )
+
             Text(
                 text = "Starts at ${event.start_date} - ${event.end_date}",
                 fontSize = 14.sp,
-                color = Color.Gray
-            )
+                color = Color.White
+                )
 
             Spacer(modifier = Modifier.height(12.dp))
 
             Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
-            ) {
-                Button(onClick = { /* Abrir modal de comprar */ }) {
-                    Text("Comprar")
+               ) {
+                Button(
+                    onClick = {/* Abrir pagina comprar entrada*/},
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF14296F),
+                        contentColor = Color.White
+                                                        ),
+                    modifier = Modifier
+                        .height(40.dp)
+                      ) {
+                    Text(
+                        text = "Buy"
+                        )
                 }
-                OutlinedButton(onClick = { /*abrir un modal con mas info*/}) {
-                    Text("Más info")
+                Button(
+                    onClick = {/* Abrir pagina mas info*/},
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF14296F),
+                        contentColor = Color.White
+                                                        ),
+                    modifier = Modifier
+                        .height(40.dp)
+                        .padding(start = 5.dp)
+                      ) {
+                    Text(
+                        text = "Read more"
+                        )
                 }
             }
         }
+            Box(
+                modifier = Modifier
+                    .padding(top = 15.dp, end = 6.dp)
+                    .size(130.dp)
+                    .background(Color.LightGray)
+                    .clip(RoundedCornerShape(40.dp))
+                ) {}
+          /*  AsyncImage(
+                model = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnS_M_rDC7mdZq0b-dRC_pWRHkxxGrbv85MA&s",
+                contentDescription = "Imagen del evento",
+                modifier = Modifier
+                    .height(200.dp)
+                    .width(180.dp)
+                    .padding(end = 15.dp)
+                    .clip(RoundedCornerShape(70.dp))
+                      )*/
+    }
     }
 }
+
+

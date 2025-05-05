@@ -9,6 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.mingseventsapp.layouts.login.LoginScreen
 import com.example.mingseventsapp.layouts.login.PutBackground
 import com.example.mingseventsapp.layouts.menu.HomeMenuContent
+import com.example.mingseventsapp.layouts.register.RegisterScreen
 
 
 @Composable
@@ -21,9 +22,6 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                 LoginScreen(
                     viewModel = viewModel,
                     navController = navController,
-                    onNavigateToRegister = {
-                        navController.navigate(Routes.REGISTER)
-                    }
                 )
             }
         }
@@ -31,7 +29,7 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
             HomeMenuContent()
         }
         composable(Routes.REGISTER) {
-            // Aquí puedes agregar tu RegisterScreen o lo que desees mostrar en esa ruta
+            RegisterScreen()
         }
     }
 }

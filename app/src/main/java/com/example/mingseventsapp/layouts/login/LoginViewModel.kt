@@ -37,7 +37,7 @@ class LoginViewModel : ViewModel() {
             _formState.value = _formState.value.copy(isLoading = true)
             delay(2000)
 
-            if (_formState.value.email == "admin@example.com" && _formState.value.password == "1234") {
+            if (_formState.value.email == "" && _formState.value.password == "") {
                 _formState.value = _formState.value.copy(error = null)
                 _navigateToMenu.emit(Unit)
 

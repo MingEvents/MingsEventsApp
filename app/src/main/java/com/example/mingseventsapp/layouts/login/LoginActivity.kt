@@ -32,6 +32,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.mingseventsapp.AppNavHost
@@ -62,9 +63,10 @@ fun PutBackground(content: @Composable () -> Unit) {
 
 @Composable
 fun LoginScreen(viewModel: LoginViewModel = viewModel(),
-                onNavigateToRegister: () -> Unit,
                 navController: NavHostController,) {
+
     val state by viewModel.formState.collectAsState()
+    val localLoadingState = remember { mutableStateOf(state.isLoading) }
 
     LaunchedEffect(Unit) {
         viewModel.navigateToMenu.collect {
@@ -75,16 +77,8 @@ fun LoginScreen(viewModel: LoginViewModel = viewModel(),
     }
 
     if (state.isLoading) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator(
-                color = Color(0xFF14296F)
-            )
-        }
-    } else {
+        showLoadingDialog(localLoadingState)
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -146,9 +140,25 @@ fun LoginScreen(viewModel: LoginViewModel = viewModel(),
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier
                 .clickable {
-                    onNavigateToRegister()
-                }
+                    navController.navigate(Routes.REGISTER)
+                 }
         )
     }
-  }
+}
+
+@Composable
+fun showLoadingDialog(isLoading: MutableState<Boolean>) {
+    Dialog(
+        onDismissRequest = { isLoading.value = false }
+          ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+           ) {
+            CircularProgressIndicator(
+                color = Color(0xFF14296F)
+                                     )
+        }
+    }
 }
