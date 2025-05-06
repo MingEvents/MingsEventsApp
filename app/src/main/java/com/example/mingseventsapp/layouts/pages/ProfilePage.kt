@@ -2,7 +2,10 @@ package com.example.mingseventsapp.layouts.pages
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -16,14 +19,21 @@ fun ProfilePage() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Blue),
-        contentAlignment = Alignment.Center,
-
-        ) {
-        Text(
-            text = "Profile page",
-            color = Color.White,
-            fontSize = 50.sp
-        )
+            .background(Color(0xFFd7e9fc)),
+        contentAlignment = Alignment.Center
+       ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(vertical = 40.dp, horizontal = 0.dp),
+            horizontalAlignment = Alignment.Start,
+              ) {
+            Text(
+                text = "Profile",
+                fontSize = 40.sp,
+                modifier = Modifier.padding(start = 16.dp, bottom = 8.dp)
+                )
+            Divider(color = Color.Black, thickness = 1.dp)
+        }
     }
 }

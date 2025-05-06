@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
 import com.example.mingseventsapp.model.event.Event
@@ -249,6 +250,7 @@ fun EventItem(event: Event) {
                         )
                 }
                 Button(
+
                     onClick = {/* Abrir pagina mas info*/},
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFF14296F),
@@ -266,21 +268,20 @@ fun EventItem(event: Event) {
         }
             Box(
                 modifier = Modifier
-                    .padding(top = 15.dp, end = 6.dp)
-                    .size(130.dp)
-                    .background(Color.LightGray)
-                    .clip(RoundedCornerShape(40.dp))
-                ) {}
-          /*  AsyncImage(
-                model = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnS_M_rDC7mdZq0b-dRC_pWRHkxxGrbv85MA&s",
-                contentDescription = "Imagen del evento",
-                modifier = Modifier
-                    .height(200.dp)
-                    .width(180.dp)
-                    .padding(end = 15.dp)
-                    .clip(RoundedCornerShape(70.dp))
-                      )*/
-    }
+                        .padding(top = 15.dp, end = 6.dp)
+                        .size(130.dp)
+                ) {
+                AsyncImage(
+                    model = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnS_M_rDC7mdZq0b-dRC_pWRHkxxGrbv85MA&s",
+                    contentDescription = "Imagen del evento",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(Color.LightGray)
+                          )
+            }
+         }
     }
 }
 
