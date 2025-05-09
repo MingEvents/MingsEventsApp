@@ -99,7 +99,9 @@ fun LoginScreen(viewModel: LoginViewModel = viewModel(),
             onValueChange = { viewModel.setEmail(it) },
             label = { Text("Email") },
             singleLine = true,
-            modifier = Modifier.width(350.dp).background(Color.Transparent),
+            modifier = Modifier
+                .width(350.dp)
+                .background(Color.Transparent),
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = Color.Transparent,
                 unfocusedContainerColor = Color.Transparent,

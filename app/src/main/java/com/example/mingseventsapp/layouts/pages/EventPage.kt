@@ -157,7 +157,6 @@ fun EventPage() {
             query = searchString,
             onQueryChange = {
                 searchString = it
-                searchString = it
                 filteredEvents = events.filter { e ->
                     e.name.contains(it, ignoreCase = true)
                 }.toMutableList()
