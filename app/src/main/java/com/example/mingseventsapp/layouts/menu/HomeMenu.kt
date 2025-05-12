@@ -2,8 +2,6 @@ package com.example.mingseventsapp.layouts.menu
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavController
-import com.example.mingseventsapp.AppNavHost
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -11,14 +9,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.example.mingseventsapp.layouts.pages.CartPage
-import com.example.mingseventsapp.layouts.pages.ChatPage
-import com.example.mingseventsapp.layouts.pages.EventPage
-import com.example.mingseventsapp.layouts.pages.ProfilePage
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import com.example.mingseventsapp.layouts.pages.Cart.CartPage
+import com.example.mingseventsapp.layouts.pages.Chat.ChatPage
+import com.example.mingseventsapp.layouts.pages.Event.EventPage
+import com.example.mingseventsapp.layouts.pages.Profile.ProfilePage
 import com.example.mingseventsapp.model.NavItem
 
 @Composable
-fun HomeMenuContent(modifier: Modifier = Modifier) {
+fun HomeMenuContent(modifier: Modifier = Modifier, navController: NavHostController) {
     var selectedIndex by remember { mutableStateOf(0) }
 
     val navItemList = listOf(
@@ -54,15 +54,15 @@ fun HomeMenuContent(modifier: Modifier = Modifier) {
         }
     ) {
         innerPadding ->
-        ContentScreen(modifier = Modifier.padding(innerPadding), selectedIndex)
+        ContentScreen(modifier = Modifier.padding(innerPadding), selectedIndex, navController)
     }
 }
 
 @Composable
-fun ContentScreen(modifier: Modifier, selectedIndex: Int) {
+fun ContentScreen(modifier: Modifier, selectedIndex: Int, navController: NavHostController) {
     when(selectedIndex) {
         0 -> EventPage()
-        1 -> ChatPage()
+        1 -> ChatPage(navController)
         2 -> CartPage()
         3 -> ProfilePage()
     }

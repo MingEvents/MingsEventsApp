@@ -1,4 +1,4 @@
-package com.example.mingseventsapp.layouts.pages
+package com.example.mingseventsapp.layouts.pages.Chat
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -36,13 +36,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.example.mingseventsapp.Routes
 import com.example.mingseventsapp.model.chat.Chat
 import com.example.mingseventsapp.model.user.User
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatPage() {
+fun ChatPage(navController: NavHostController) {
     val chats = mutableListOf(
         Chat(1, "2024-03-10 08:45", 101, 102),
         Chat(2, "2024-03-10 09:12", 101, 103),
@@ -269,7 +273,7 @@ fun ChatPage() {
             Spacer(modifier = Modifier.height(10.dp))
         }
         items(filteredChats) { chat ->
-            ChatItem(chat, userList)
+            ChatItem(chat, userList, navController)
         }
 
         item {
@@ -279,7 +283,7 @@ fun ChatPage() {
 }
 
 @Composable
-fun ChatItem(chat: Chat, usersList: List<User>) {
+fun ChatItem(chat: Chat, usersList: List<User>, navController: NavHostController) {
     val user = usersList.find { it.user_id == chat.user2_id }!!
 
     Card(
@@ -320,7 +324,9 @@ fun ChatItem(chat: Chat, usersList: List<User>) {
                     modifier = Modifier.fillMaxWidth()
                    ) {
                     Button(
-                        onClick = {/* Abrir pagina comprar entrada*/},
+                        onClick = {
+                            navController.navigate(Routes.CHATCONV)
+                        },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xFF14296F),
                             contentColor = Color.White

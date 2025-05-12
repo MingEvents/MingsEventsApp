@@ -1,4 +1,4 @@
-package com.example.mingseventsapp.layouts.pages
+package com.example.mingseventsapp.layouts.pages.Cart
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

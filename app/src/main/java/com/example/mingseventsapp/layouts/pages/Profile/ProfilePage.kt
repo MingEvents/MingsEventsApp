@@ -1,7 +1,6 @@
-package com.example.mingseventsapp.layouts.pages
+package com.example.mingseventsapp.layouts.pages.Profile
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.mingseventsapp.UserLogged
-import com.example.mingseventsapp.model.user.User
 
 @Composable
 fun ProfilePage() {
