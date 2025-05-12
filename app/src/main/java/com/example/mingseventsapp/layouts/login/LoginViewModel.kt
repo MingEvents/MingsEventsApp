@@ -1,8 +1,13 @@
 // LoginViewModel.kt
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.mingseventsapp.Routes
+import com.example.mingseventsapp.UserLogged
+import com.example.mingseventsapp.UserRepository
+import com.example.mingseventsapp.Utilities.Utils.showError
+import com.example.mingseventsapp.model.user.User
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,6 +23,7 @@ data class LoginFormState(
 )
 
 class LoginViewModel : ViewModel() {
+
     private val _formState = MutableStateFlow(LoginFormState())
     val formState: StateFlow<LoginFormState> = _formState
 
@@ -32,11 +38,41 @@ class LoginViewModel : ViewModel() {
         _formState.value = _formState.value.copy(password = password)
     }
 
-    fun login() {
+    fun login(password: String, email: String) {
+        val appRepository = UserRepository()
         viewModelScope.launch {
             _formState.value = _formState.value.copy(isLoading = true)
-            delay(2000)
+            try {
+                val response = appRepository.login(email, password)
 
+                when {
+                    response.isSuccessful -> {
+                        response.body()?.let { loggedInApp ->
+                            UserLogged.user = loggedInApp
+                            showUserInfo(loggedInApp)
+                            _formState.value = _formState.value.copy(isLoading = false)
+                            _navigateToMenu.emit(Unit)
+
+                        } ?: run {
+                        }
+                    }
+
+                    response.code() == 404 -> {
+
+                    }
+
+                    else -> {
+                    }
+                }
+            } catch (e: Exception)
+            {
+
+                e.printStackTrace()
+            }
+
+
+            //delay(2000)
+            /*
             if (_formState.value.email == "" && _formState.value.password == "") {
                 _formState.value = _formState.value.copy(error = null)
                 _navigateToMenu.emit(Unit)
@@ -44,8 +80,17 @@ class LoginViewModel : ViewModel() {
             } else {
                 _formState.value = _formState.value.copy(error = "Credenciales incorrectas")
             }
-
-            _formState.value = _formState.value.copy(isLoading = false)
+            */
         }
+    }
+    private fun showUserInfo(user: User) {
+        val userInfo = """
+            Nombre: ${user.name}
+            Correo: ${user.email}
+            Rol: ${user.role_id}
+            ID: ${user.user_id}
+        """.trimIndent()
+
+        //    Toast.makeText(this, userInfo, Toast.LENGTH_LONG).show()
     }
 }

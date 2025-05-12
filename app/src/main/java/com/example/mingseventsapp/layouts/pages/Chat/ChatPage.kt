@@ -36,16 +36,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.mingseventsapp.Routes
+import com.example.mingseventsapp.UserLogged
+import com.example.mingseventsapp.UserRepository
 import com.example.mingseventsapp.model.chat.Chat
 import com.example.mingseventsapp.model.user.User
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+
 fun ChatPage(navController: NavHostController) {
     val chats = mutableListOf(
         Chat(1, "2024-03-10 08:45", 101, 102),

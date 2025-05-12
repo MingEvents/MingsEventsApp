@@ -41,6 +41,7 @@ import com.example.mingseventsapp.Routes
 
 
 class LoginActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -125,7 +126,7 @@ fun LoginScreen(viewModel: LoginViewModel = viewModel(),
         )
 
         Button(
-            onClick = { viewModel.login() },
+            onClick = { viewModel.login(state.password,state.email) },
             modifier = Modifier
                 .width(250.dp)
                 .padding(top = 100.dp),
