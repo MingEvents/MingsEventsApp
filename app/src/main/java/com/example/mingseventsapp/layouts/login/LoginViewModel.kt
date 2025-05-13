@@ -30,6 +30,9 @@ class LoginViewModel : ViewModel() {
     private val _navigateToMenu = MutableSharedFlow<Unit>()
     val navigateToMenu = _navigateToMenu.asSharedFlow()
 
+    private val _error = MutableSharedFlow<Unit>()
+    val error = _error.asSharedFlow()
+
     fun setEmail(email: String) {
         _formState.value = _formState.value.copy(email = email)
     }
@@ -62,25 +65,15 @@ class LoginViewModel : ViewModel() {
                     }
 
                     else -> {
+                        _formState.value = _formState.value.copy(error = "Usuario o contraseña incorrectos")
                     }
                 }
             } catch (e: Exception)
             {
-
+                _formState.value = _formState.value.copy(error = "Usuario o contraseña incorrectos")
                 e.printStackTrace()
             }
 
-
-            //delay(2000)
-            /*
-            if (_formState.value.email == "" && _formState.value.password == "") {
-                _formState.value = _formState.value.copy(error = null)
-                _navigateToMenu.emit(Unit)
-
-            } else {
-                _formState.value = _formState.value.copy(error = "Credenciales incorrectas")
-            }
-            */
         }
     }
     private fun showUserInfo(user: User) {
@@ -90,7 +83,9 @@ class LoginViewModel : ViewModel() {
             Rol: ${user.role_id}
             ID: ${user.user_id}
         """.trimIndent()
+    }
 
-        //    Toast.makeText(this, userInfo, Toast.LENGTH_LONG).show()
+    fun clearError() {
+        _formState.value = _formState.value.copy(error = null)
     }
 }

@@ -1,6 +1,8 @@
 package com.example.mingseventsapp.layouts.pages.Chat
 
+import android.os.Bundle
 import androidx.compose.foundation.background
+import androidx.navigation.NavHostController
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,22 +38,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import coil.compose.AsyncImage
 import com.example.mingseventsapp.Routes
 import com.example.mingseventsapp.UserLogged
-import com.example.mingseventsapp.UserRepository
 import com.example.mingseventsapp.model.chat.Chat
 import com.example.mingseventsapp.model.user.User
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-
 fun ChatPage(navController: NavHostController) {
+    UserLogged.selectedUserChat = User()
     val chats = mutableListOf(
         Chat(1, "2024-03-10 08:45", 101, 102),
         Chat(2, "2024-03-10 09:12", 101, 103),
@@ -75,7 +74,7 @@ fun ChatPage(navController: NavHostController) {
             "Pérez",
             123456789,
             "passJuan123",
-            "https://example.com/photos/juan.jpg",
+            "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png",
             "juan.perez@example.com",
             1
             ),
@@ -85,7 +84,7 @@ fun ChatPage(navController: NavHostController) {
             "García",
             987654321,
             "passMaria456",
-            "https://example.com/photos/maria.jpg",
+            "https://media.istockphoto.com/id/1252249414/es/vector/car%C3%A1cter-femenino-joven-molesto-expresi%C3%B3n-facial-esc%C3%A9ptica.jpg?s=612x612&w=0&k=20&c=cIrHDM_zKOZ-wmFF_fZvRqcbLW0wVXLxKpZ6YtVJU3Q=",
             "maria.garcia@example.com",
             2
             ),
@@ -95,7 +94,7 @@ fun ChatPage(navController: NavHostController) {
             "López",
             555555555,
             "carlosL789",
-            "https://example.com/photos/carlos.jpg",
+            "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png",
             "carlos.lopez@example.com",
             1
             ),
@@ -105,7 +104,7 @@ fun ChatPage(navController: NavHostController) {
             "Martínez",
             444444444,
             "anaM123!",
-            "https://example.com/photos/ana.jpg",
+            "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png",
             "ana.martinez@example.com",
             3
             ),
@@ -115,7 +114,7 @@ fun ChatPage(navController: NavHostController) {
             "Rodríguez",
             777777777,
             "luisR456",
-            "https://example.com/photos/luis.jpg",
+            "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png",
             "luis.rodriguez@example.com",
             2
             ),
@@ -125,7 +124,7 @@ fun ChatPage(navController: NavHostController) {
             "Hernández",
             666666666,
             "sofiaH789",
-            "https://example.com/photos/sofia.jpg",
+            "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png",
             "sofia.hernandez@example.com",
             1
             ),
@@ -135,7 +134,7 @@ fun ChatPage(navController: NavHostController) {
             "Díaz",
             333333333,
             "andresD123",
-            "https://example.com/photos/andres.jpg",
+            "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png",
             "andres.diaz@example.com",
             2
             ),
@@ -145,7 +144,7 @@ fun ChatPage(navController: NavHostController) {
             "Vargas",
             222222222,
             "luciaV456",
-            "https://example.com/photos/lucia.jpg",
+            "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png",
             "lucia.vargas@example.com",
             3
             ),
@@ -155,7 +154,7 @@ fun ChatPage(navController: NavHostController) {
             "Silva",
             111111111,
             "javierS789",
-            "https://example.com/photos/javier.jpg",
+            "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png",
             "javier.silva@example.com",
             1
             ),
@@ -165,7 +164,7 @@ fun ChatPage(navController: NavHostController) {
             "Torres",
             888888888,
             "valenT123",
-            "https://example.com/photos/valentina.jpg",
+            "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png",
             "valentina.torres@example.com",
             2
             ),
@@ -175,7 +174,7 @@ fun ChatPage(navController: NavHostController) {
             "Castro",
             999999999,
             "diegoC456",
-            "https://example.com/photos/diego.jpg",
+            "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png",
             "diego.castro@example.com",
             1
             ),
@@ -185,7 +184,7 @@ fun ChatPage(navController: NavHostController) {
             "Flores",
             101010101,
             "camilaF789",
-            "https://example.com/photos/camila.jpg",
+            "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png",
             "camila.flores@example.com",
             3
             ),
@@ -195,7 +194,7 @@ fun ChatPage(navController: NavHostController) {
             "Romero",
             112233445,
             "gabrielR123",
-            "https://example.com/photos/gabriel.jpg",
+            "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png",
             "gabriel.romero@example.com",
             2
             ),
@@ -205,7 +204,7 @@ fun ChatPage(navController: NavHostController) {
             "Ruiz",
             554433221,
             "isabellaU456",
-            "https://example.com/photos/isabella.jpg",
+            "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png",
             "isabella.ruiz@example.com",
             1
             ),
@@ -215,7 +214,7 @@ fun ChatPage(navController: NavHostController) {
             "Jiménez",
             778899001,
             "mateoJ789",
-            "https://example.com/photos/mateo.jpg",
+            "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png",
             "mateo.jimenez@example.com",
             2
             )
@@ -330,6 +329,7 @@ fun ChatItem(chat: Chat, usersList: List<User>, navController: NavHostController
                    ) {
                     Button(
                         onClick = {
+                            UserLogged.selectedUserChat = user
                             navController.navigate(Routes.CHATCONV)
                         },
                         colors = ButtonDefaults.buttonColors(
@@ -352,11 +352,11 @@ fun ChatItem(chat: Chat, usersList: List<User>, navController: NavHostController
                     .align(Alignment.CenterVertically)
                ) {
                 AsyncImage(
-                    model = "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png",
+                    model = user.photo,
                     contentDescription = "Imagen del evento",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .fillMaxSize()
+                        .size(130.dp)
                         .clip(CircleShape)
                           )
             }

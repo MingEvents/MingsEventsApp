@@ -1,12 +1,16 @@
 package com.example.mingseventsapp.model.user
 
+import android.annotation.SuppressLint
+import android.os.Parcel
+import android.os.Parcelable
+
 data class User(
     val user_id: Int = 0,
-    var name: String = "Bruno",
-    var second_name: String = "Convalia Rejas",
-    var phone: Int = 664321234,
-    var password: String = "1234",
+    var name: String = "",
+    var second_name: String = "",
+    var phone: Int = 0,
+    var password: String = "",
     val photo: String = "",
-    var email: String = "bruno@gmail.com",
-    val role_id: Int = 1
+    var email: String = "",
+    val role_id: Int = 0
                )

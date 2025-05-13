@@ -80,6 +80,11 @@ fun LoginScreen(viewModel: LoginViewModel = viewModel(),
     if (state.isLoading) {
         showLoadingDialog(localLoadingState)
     }
+
+    if (state.error != null) {
+        localLoadingState.value = false
+        ErrorDialog(errorMessage = state.error!!, onDismiss = { viewModel.clearError() })
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -164,4 +169,21 @@ fun showLoadingDialog(isLoading: MutableState<Boolean>) {
                                      )
         }
     }
+}
+
+@Composable
+fun ErrorDialog(
+    errorMessage: String,
+    onDismiss: () -> Unit
+               ) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = "Error") },
+        text = { Text(text = errorMessage) },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Aceptar")
+            }
+        }
+               )
 }
