@@ -40,8 +40,10 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                 )
             }
         }
-        composable(Routes.MENU) {
-            HomeMenuContent(navController = navController)
+        composable(Routes.MENU + "/{startIndex}") {
+                backStackEntry ->
+            val startIndex = backStackEntry.arguments?.getString("startIndex")?.toIntOrNull() ?: 0
+            HomeMenuContent(navController = navController, startIndex = startIndex)
         }
         composable(Routes.REGISTER) {
             RegisterScreen()

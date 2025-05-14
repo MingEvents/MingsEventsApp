@@ -18,8 +18,9 @@ import com.example.mingseventsapp.layouts.pages.Profile.ProfilePage
 import com.example.mingseventsapp.model.NavItem
 
 @Composable
-fun HomeMenuContent(modifier: Modifier = Modifier, navController: NavHostController) {
+fun HomeMenuContent(modifier: Modifier = Modifier, navController: NavHostController, startIndex: Int = 0) {
     var selectedIndex by remember { mutableStateOf(0) }
+    selectedIndex = startIndex
 
     val navItemList = listOf(
         NavItem("Events", Icons.Default.Star),

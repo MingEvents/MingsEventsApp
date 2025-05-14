@@ -71,7 +71,7 @@ fun LoginScreen(viewModel: LoginViewModel = viewModel(),
 
     LaunchedEffect(Unit) {
         viewModel.navigateToMenu.collect {
-            navController.navigate(Routes.MENU) {
+            navController.navigate(Routes.MENU + "/0") {
                 popUpTo(Routes.LOGIN) { inclusive = true }
             }
         }
