@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -39,11 +38,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
 import com.example.mingseventsapp.model.event.Event
-import java.io.File
 
 
 @Preview(showBackground = true)
@@ -287,11 +286,11 @@ fun EventItem(event: Event) {
          }
     }
 }
-
+//   val context = LocalContext.current
+// val file = File(context.filesDir, event.photo)
 @Composable
 fun ReadMoreModal(onClose: () -> Unit, event: Event) {
- //   val context = LocalContext.current
-    // val file = File(context.filesDir, event.photo)
+
     Dialog(
         onDismissRequest = { onClose() }
           ) {
@@ -316,10 +315,60 @@ fun ReadMoreModal(onClose: () -> Unit, event: Event) {
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxSize()
-                        .clip(RoundedCornerShape(15.dp)) // ← este es clave
+                        .clip(RoundedCornerShape(15.dp))
                           )
             }
+            Column (
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 220.dp, start = 20.dp, end = 20.dp)
+                    .height(110.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color(0xFF7796cb))
+                   ) {
+                Text (
+                    text = event.name,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Left,
+                    color = Color.White,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 20.dp, start = 20.dp, end = 20.dp)
+                    )
 
+                Text(
+                    text = event.start_date + " - " + event.end_date,
+                    fontSize = 15.sp,
+                    textAlign = TextAlign.Left,
+                    color = Color.White,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp, start = 20.dp, end = 20.dp)
+                    )
+
+                Text(
+                    text = "España, Barcelona",
+                    fontSize = 15.sp,
+                    textAlign = TextAlign.Left,
+                    color = Color.White,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 5.dp, start = 20.dp, end = 20.dp)
+                    )
+
+            }
+
+            Column (
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 350.dp, start = 20.dp, end = 20.dp)
+                    .height(110.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color(0xFF7796cb))
+                   ) {
+
+            }
         }
     }
 }
