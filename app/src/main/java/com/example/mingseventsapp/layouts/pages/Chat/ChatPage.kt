@@ -1,6 +1,7 @@
 package com.example.mingseventsapp.layouts.pages.Chat
 
 import android.os.Bundle
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.navigation.NavHostController
 import androidx.compose.foundation.layout.Box
@@ -46,179 +47,30 @@ import com.example.mingseventsapp.Routes
 import com.example.mingseventsapp.UserLogged
 import com.example.mingseventsapp.model.chat.Chat
 import com.example.mingseventsapp.model.user.User
+import com.example.mingseventsapp.model.user.UsersViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import org.json.JSONObject
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import kotlin.math.log
+
+import java.io.PrintWriter
+import java.net.Socket
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatPage(navController: NavHostController) {
     UserLogged.selectedUserChat = User()
-    val chats = mutableListOf(
-        Chat(1, "2024-03-10 08:45", 101, 102),
-        Chat(2, "2024-03-10 09:12", 101, 103),
-        Chat(3, "2024-03-10 09:30", 101, 104),
-        Chat(4, "2024-03-10 10:05", 101, 105),
-        Chat(5, "2024-03-10 10:45", 101, 201),
-        Chat(6, "2024-03-10 11:20", 101, 202),
-        Chat(7, "2024-03-10 11:50", 101, 203),
-        Chat(8, "2024-03-10 12:10", 101, 204),
-        Chat(9, "2024-03-10 13:00", 101, 205),
-        Chat(10, "2024-03-10 13:45", 101, 206),
-        Chat(11, "2024-03-10 14:20", 101, 207),
-        Chat(12, "2024-03-10 15:00", 101, 208),
-        Chat(13, "2024-03-10 15:40", 101, 209),
-        Chat(14, "2024-03-10 16:15", 101, 210),
-                             )
-    val userList = listOf(
-        User(
-            101,
-            "Juan",
-            "Pérez",
-            123456789,
-            "passJuan123",
-            "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png",
-            "juan.perez@example.com",
-            1
-            ),
-        User(
-            102,
-            "María",
-            "García",
-            987654321,
-            "passMaria456",
-            "https://media.istockphoto.com/id/1252249414/es/vector/car%C3%A1cter-femenino-joven-molesto-expresi%C3%B3n-facial-esc%C3%A9ptica.jpg?s=612x612&w=0&k=20&c=cIrHDM_zKOZ-wmFF_fZvRqcbLW0wVXLxKpZ6YtVJU3Q=",
-            "maria.garcia@example.com",
-            2
-            ),
-        User(
-            103,
-            "Carlos",
-            "López",
-            555555555,
-            "carlosL789",
-            "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png",
-            "carlos.lopez@example.com",
-            1
-            ),
-        User(
-            104,
-            "Ana",
-            "Martínez",
-            444444444,
-            "anaM123!",
-            "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png",
-            "ana.martinez@example.com",
-            3
-            ),
-        User(
-            105,
-            "Luis",
-            "Rodríguez",
-            777777777,
-            "luisR456",
-            "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png",
-            "luis.rodriguez@example.com",
-            2
-            ),
-        User(
-            201,
-            "Sofía",
-            "Hernández",
-            666666666,
-            "sofiaH789",
-            "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png",
-            "sofia.hernandez@example.com",
-            1
-            ),
-        User(
-            202,
-            "Andrés",
-            "Díaz",
-            333333333,
-            "andresD123",
-            "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png",
-            "andres.diaz@example.com",
-            2
-            ),
-        User(
-            203,
-            "Lucía",
-            "Vargas",
-            222222222,
-            "luciaV456",
-            "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png",
-            "lucia.vargas@example.com",
-            3
-            ),
-        User(
-            204,
-            "Javier",
-            "Silva",
-            111111111,
-            "javierS789",
-            "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png",
-            "javier.silva@example.com",
-            1
-            ),
-        User(
-            205,
-            "Valentina",
-            "Torres",
-            888888888,
-            "valenT123",
-            "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png",
-            "valentina.torres@example.com",
-            2
-            ),
-        User(
-            206,
-            "Diego",
-            "Castro",
-            999999999,
-            "diegoC456",
-            "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png",
-            "diego.castro@example.com",
-            1
-            ),
-        User(
-            207,
-            "Camila",
-            "Flores",
-            101010101,
-            "camilaF789",
-            "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png",
-            "camila.flores@example.com",
-            3
-            ),
-        User(
-            208,
-            "Gabriel",
-            "Romero",
-            112233445,
-            "gabrielR123",
-            "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png",
-            "gabriel.romero@example.com",
-            2
-            ),
-        User(
-            209,
-            "Isabella",
-            "Ruiz",
-            554433221,
-            "isabellaU456",
-            "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png",
-            "isabella.ruiz@example.com",
-            1
-            ),
-        User(
-            210,
-            "Mateo",
-            "Jiménez",
-            778899001,
-            "mateoJ789",
-            "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png",
-            "mateo.jimenez@example.com",
-            2
-            )
-                         )
+    UserLogged.selectedChat = Chat()
+    val chatViewModel = ChatViewModel()
+    val userViewModel = UsersViewModel()
+
+    withContext(Dispatchers.IO) {
+        val chats: MutableList<Chat> = chatViewModel.getChatsById()
+    }
+
+    val userList: MutableList<User> = userViewModel.getAllUsers()
 
 
     var searchString by remember { mutableStateOf("") }
@@ -277,6 +129,7 @@ fun ChatPage(navController: NavHostController) {
             Spacer(modifier = Modifier.height(10.dp))
         }
         items(filteredChats) { chat ->
+
             ChatItem(chat, userList, navController)
         }
 
@@ -330,6 +183,7 @@ fun ChatItem(chat: Chat, usersList: List<User>, navController: NavHostController
                     Button(
                         onClick = {
                             UserLogged.selectedUserChat = user
+                            UserLogged.selectedChat = chat
                             navController.navigate(Routes.CHATCONV)
                         },
                         colors = ButtonDefaults.buttonColors(
@@ -363,4 +217,6 @@ fun ChatItem(chat: Chat, usersList: List<User>, navController: NavHostController
         }
     }
 }
+
+
 

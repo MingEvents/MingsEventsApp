@@ -1,6 +1,7 @@
 package com.example.mingseventsapp.layouts.pages.Event
 
 import android.annotation.SuppressLint
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,7 +43,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
+import com.example.mingseventsapp.UserLogged
 import com.example.mingseventsapp.model.event.Event
+import org.json.JSONObject
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.io.PrintWriter
+import java.net.Socket
+import kotlin.math.log
+
+
 
 
 @Preview(showBackground = true)
@@ -50,6 +60,7 @@ import com.example.mingseventsapp.model.event.Event
 fun EventPagePreview() {
     EventPage()
 }
+
 
 
 @SuppressLint("MutableCollectionMutableState")
@@ -363,14 +374,35 @@ fun ReadMoreModal(onClose: () -> Unit, event: Event) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 350.dp, start = 20.dp, end = 20.dp)
-                    .height(110.dp)
                     .clip(RoundedCornerShape(12.dp))
                     .background(Color(0xFF7796cb))
                    ) {
+
+                Text (
+                    text = "Description",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Left,
+                    color = Color.White,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 20.dp, start = 20.dp, end = 20.dp)
+                     )
+
+                Text(
+                    text = event.descripcion,
+                    fontSize = 15.sp,
+                    textAlign = TextAlign.Left,
+                    color = Color.White,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 5.dp, start = 20.dp, end = 20.dp, bottom = 20.dp)
+                    )
 
             }
         }
     }
 }
+
 
 
