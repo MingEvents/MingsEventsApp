@@ -32,7 +32,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -233,22 +232,6 @@ fun ChatConv(navController: NavHostController) {
                     Icon(
                         imageVector = Icons.Filled.Send,
                         contentDescription = "Enviar mensaje",
-                        tint = Color.White,
-                        modifier = Modifier.size(18.dp)
-                        )
-                }
-            } else {
-
-                IconButton(
-                    onClick = {  },
-                    modifier = Modifier
-                        .padding(end = 10.dp)
-                        .size(36.dp)
-                        .background(Color(0xFF0000FF), shape = CircleShape)
-                          ) {
-                    Icon(
-                        imageVector = Icons.Filled.Mic,
-                        contentDescription = "Enviar audio",
                         tint = Color.White,
                         modifier = Modifier.size(18.dp)
                         )

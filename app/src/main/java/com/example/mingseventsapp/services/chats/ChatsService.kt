@@ -2,6 +2,7 @@
 package com.example.mingseventsapp.services.chats
 
 import com.example.mingseventsapp.model.chat.Chat
+import com.example.mingseventsapp.model.chat.ChatContainer
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -18,7 +19,7 @@ interface ChatService {
 
     // GET: api/Chat/{id} - Obtener chat por ID
     @GET("api/Chat/{id}")
-    suspend fun getChatById(@Path("id") id: Int): Response<Chat>
+    suspend fun getChatById(@Path("id") id: Int): Response<List<Chat>>
 
     // GET: api/Chat/user/{id} - Obtener chats asociados a un usuario
     @GET("api/Chat/user/{id}")

@@ -10,33 +10,21 @@ import kotlinx.coroutines.launch
 
 class UsersViewModel: ViewModel(){
 
-    fun getAllUsers(): MutableList<User> {
+    suspend fun getAllUsers(): List<User> {
         val appRepository = UserRepository()
-        var users = mutableListOf<User>()
-        viewModelScope.launch{
-            try {
-                val response = appRepository.getAllUsers()
 
-                when {
-                    response.isSuccessful -> {
-                        response.body()?.let { userResponse ->
-                            users = userResponse.toMutableList()
-                        } ?: run {}
-                    }
+        return try {
+            val response = appRepository.getAllUsers()
 
-                    response.code() == 404 -> {
-
-                    }
-
-                    else -> {
-                    }
-                }
-            } catch (e: Exception) {
-
-                e.printStackTrace()
+            if (response.isSuccessful) {
+                response.body() ?: emptyList()
+            } else {
+                emptyList()
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
         }
-        return users
     }
 
 }

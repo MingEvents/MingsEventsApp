@@ -23,11 +23,15 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,6 +43,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
@@ -61,80 +66,88 @@ import java.net.Socket
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatPage(navController: NavHostController) {
+    var isLoading by remember { mutableStateOf(true) }
+
     UserLogged.selectedUserChat = User()
     UserLogged.selectedChat = Chat()
+
     val chatViewModel = ChatViewModel()
     val userViewModel = UsersViewModel()
+    var chats by remember { mutableStateOf<List<Chat>>(emptyList()) }
+    var users by remember { mutableStateOf<List<User>>(emptyList()) }
 
-    withContext(Dispatchers.IO) {
-        val chats: MutableList<Chat> = chatViewModel.getChatsById()
+    LaunchedEffect(Unit) {
+        chats = chatViewModel.getChatsByUserId().toMutableList()
+        users = userViewModel.getAllUsers().toMutableList()
+        isLoading = false
     }
 
-    val userList: MutableList<User> = userViewModel.getAllUsers()
+    if (isLoading) {
+        showLoadingDialog(isLoading = remember { mutableStateOf(true) })
+    } else {
+        var searchString by remember { mutableStateOf("") }
+        var filteredChats by remember { mutableStateOf(chats) }
 
-
-    var searchString by remember { mutableStateOf("") }
-    var filteredChats by remember { mutableStateOf(chats.toMutableList()) }
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFFd7e9fc)),
-        contentAlignment = Alignment.Center
-       ) {
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(vertical = 40.dp, horizontal = 0.dp),
-            horizontalAlignment = Alignment.Start,
-              ) {
-            Text(
-                text = "Chat",
-                fontSize = 40.sp,
-                modifier = Modifier.padding(start = 16.dp, bottom = 8.dp)
+                .background(Color(0xFFd7e9fc)),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(vertical = 40.dp, horizontal = 0.dp),
+                horizontalAlignment = Alignment.Start,
+            ) {
+                Text(
+                    text = "Chat",
+                    fontSize = 40.sp,
+                    modifier = Modifier.padding(start = 16.dp, bottom = 8.dp)
                 )
-            Divider(color = Color.Black, thickness = 1.dp)
-        }
-    }
-
-    Box(
-        modifier = Modifier
-            .padding(top = 130.dp, start = 16.dp, end = 16.dp)
-            .fillMaxWidth()
-            .wrapContentHeight()
-       ) {
-    SearchBar(query = searchString,
-              onQueryChange = { newQuery ->
-                  searchString = newQuery
-                  filteredChats = chats.filter { chat ->
-                      val user2 = userList.find { it.user_id == chat.user2_id }
-                      val fullName = user2?.name + " " + user2?.second_name
-                      fullName.contains(newQuery, ignoreCase = true)
-                  }.toMutableList()
-              },
-              onSearch = {},
-              active = false,
-              onActiveChange = {},
-              shape = RoundedCornerShape(12.dp),
-              modifier = Modifier.fillMaxWidth(),
-              placeholder = { Text("Search chats") }) {}
-    }
-
-    LazyColumn(
-        modifier = Modifier
-            .padding(top = 230.dp)
-            .fillMaxHeight()
-              ) {
-        item {
-            Spacer(modifier = Modifier.height(10.dp))
-        }
-        items(filteredChats) { chat ->
-
-            ChatItem(chat, userList, navController)
+                Divider(color = Color.Black, thickness = 1.dp)
+            }
         }
 
-        item {
-            Spacer(modifier = Modifier.height(100.dp))
+        Box(
+            modifier = Modifier
+                .padding(top = 130.dp, start = 16.dp, end = 16.dp)
+                .fillMaxWidth()
+                .wrapContentHeight()
+        ) {
+            SearchBar(
+                query = searchString,
+                onQueryChange = { newQuery ->
+                    searchString = newQuery
+                    filteredChats = chats.filter { chat ->
+                        val user2 = users.find { it.user_id == chat.user2_id }
+                        val fullName = user2?.name + " " + user2?.second_name
+                        fullName.contains(newQuery, ignoreCase = true)
+                    }.toMutableList()
+                },
+                onSearch = {},
+                active = false,
+                onActiveChange = {},
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = { Text("Search chats") }) {}
+        }
+
+        LazyColumn(
+            modifier = Modifier
+                .padding(top = 230.dp)
+                .fillMaxHeight()
+        ) {
+            item {
+                Spacer(modifier = Modifier.height(10.dp))
+            }
+            items(filteredChats) { chat ->
+                ChatItem(chat, users, navController)
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(100.dp))
+            }
         }
     }
 }
@@ -214,6 +227,23 @@ fun ChatItem(chat: Chat, usersList: List<User>, navController: NavHostController
                         .clip(CircleShape)
                           )
             }
+        }
+    }
+}
+
+@Composable
+fun showLoadingDialog(isLoading: MutableState<Boolean>) {
+    Dialog(
+        onDismissRequest = { isLoading.value = false }
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(
+                color = Color(0xFF14296F)
+            )
         }
     }
 }
