@@ -1,5 +1,7 @@
 package com.example.mingseventsapp
 import LoginViewModel
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
@@ -23,10 +25,12 @@ import com.example.mingseventsapp.layouts.login.PutBackground
 import com.example.mingseventsapp.layouts.menu.HomeMenuContent
 import com.example.mingseventsapp.layouts.pages.Chat.ChatConv
 import com.example.mingseventsapp.layouts.pages.Chat.ChatPage
+import com.example.mingseventsapp.layouts.pages.Event.BuyTicket
 import com.example.mingseventsapp.layouts.register.RegisterScreen
 import com.example.mingseventsapp.model.user.User
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppNavHost(navController: NavHostController = rememberNavController()) {
     NavHost(navController = navController, startDestination = Routes.LOGIN) {
@@ -55,6 +59,10 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
 
         composable(Routes.CHATCONV) {
             ChatConv(navController = navController)
+        }
+
+        composable(Routes.BUYTICKET) {
+            BuyTicket(navController)
         }
     }
 }

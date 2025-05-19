@@ -62,7 +62,7 @@ fun HomeMenuContent(modifier: Modifier = Modifier, navController: NavHostControl
 @Composable
 fun ContentScreen(modifier: Modifier, selectedIndex: Int, navController: NavHostController) {
     when(selectedIndex) {
-        0 -> EventPage()
+        0 -> EventPage(navController)
         1 -> ChatPage(navController)
         2 -> CartPage()
         3 -> ProfilePage()

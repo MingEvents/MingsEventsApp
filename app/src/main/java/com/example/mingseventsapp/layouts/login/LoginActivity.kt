@@ -78,7 +78,7 @@ fun LoginScreen(viewModel: LoginViewModel = viewModel(),
     }
 
     if (state.isLoading) {
-        showLoadingDialog(localLoadingState)
+        showLoadingDialog()
     }
 
     if (state.error != null) {
@@ -131,7 +131,11 @@ fun LoginScreen(viewModel: LoginViewModel = viewModel(),
         )
 
         Button(
-            onClick = { viewModel.login(state.password,state.email) },
+            onClick = {
+                state.isLoading = true
+                viewModel.login(state.password,state.email)
+                viewModel.clearError()
+                      },
             modifier = Modifier
                 .width(250.dp)
                 .padding(top = 100.dp),
@@ -155,18 +159,13 @@ fun LoginScreen(viewModel: LoginViewModel = viewModel(),
 }
 
 @Composable
-fun showLoadingDialog(isLoading: MutableState<Boolean>) {
-    Dialog(
-        onDismissRequest = { isLoading.value = false }
-          ) {
+fun showLoadingDialog() {
+    Dialog(onDismissRequest = { /* No se puede cerrar manualmente */ }) {
         Box(
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
            ) {
-            CircularProgressIndicator(
-                color = Color(0xFF14296F)
-                                     )
+            CircularProgressIndicator(color = Color(0xFF14296F))
         }
     }
 }

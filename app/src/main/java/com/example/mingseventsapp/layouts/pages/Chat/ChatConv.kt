@@ -60,6 +60,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.example.mingseventsapp.R
 import com.example.mingseventsapp.Routes
 import com.example.mingseventsapp.UserLogged
 import com.example.mingseventsapp.Utilities.CryptoUtil
@@ -96,9 +97,9 @@ class ChatServer {
     }
 }
 
-private lateinit var socket: Socket
-private lateinit var outputStream: PrintWriter
-private lateinit var inputStream: BufferedReader
+private var socket: Socket? = null
+private var outputStream: PrintWriter? = null
+private var inputStream: BufferedReader? = null
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @RequiresApi(Build.VERSION_CODES.O)
@@ -107,15 +108,18 @@ fun ChatConv(navController: NavHostController) {
     var messageText by remember { mutableStateOf("") }
     val lazyListState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
+    val scope = rememberCoroutineScope()
     val messageList = remember { mutableStateListOf<Message>() }
 
     DisposableEffect(Unit) {
         onDispose {
-            closeConnection()
+            scope.launch(Dispatchers.IO) {
+                closeConnection()
+            }
         }
     }
 
-    coroutineScope.launch {
+    coroutineScope.launch(Dispatchers.IO) {
         connectToServer(lazyListState, coroutineScope, messageList)
     }
 
@@ -136,11 +140,11 @@ fun ChatConv(navController: NavHostController) {
                modifier = Modifier
                    .size(30.dp)
                    .align(Alignment.CenterVertically)
-                   .pointerInput(Unit) {
-                       detectTapGestures(onTap = {
+                   .clickable {
+                       coroutineScope.launch(Dispatchers.IO) {
                            closeConnection()
-                           navController.navigate(Routes.MENU + "/1")
-                       })
+                       }
+                       navController.navigate(Routes.MENU + "/1")
                    },
                tint = Color(0xFF063970)
                )
@@ -152,7 +156,7 @@ fun ChatConv(navController: NavHostController) {
                    .padding(start = 40.dp)
               ) {
                AsyncImage(
-                   model = UserLogged.selectedUserChat.photo,
+                   model = UserLogged.selectedUserChat.photo ?: R.drawable.icon_default,
                    contentDescription = "Imagen del evento",
                    contentScale = ContentScale.Crop,
                    modifier = Modifier
@@ -330,8 +334,8 @@ private suspend fun connectToServer(
     try {
         if (UserLogged.isConected == false) {
             socket = Socket(SERVER_IP, SERVER_PORT)
-            outputStream = PrintWriter(socket.getOutputStream(), true)
-            inputStream = BufferedReader(InputStreamReader(socket.getInputStream()))
+            outputStream = PrintWriter(socket!!.getOutputStream(), true)
+            inputStream = BufferedReader(InputStreamReader(socket!!.getInputStream()))
             UserLogged.isConected = true;
 
             Log.e(TAG_SOCKET, "Conectado al servidor")
@@ -342,7 +346,7 @@ private suspend fun connectToServer(
                 put("chatId", UserLogged.selectedChat.chat_id)
             }
 
-            outputStream.println(authJson.toString())
+            outputStream!!.println(authJson.toString())
             receiveMessages(lazyListState, coroutineScope, messageList)
 
         } else {
@@ -455,25 +459,49 @@ private fun sendMessage(receiverId: Int, messageText: String, messageId: Int, me
 }
 
 fun closeConnection() {
-    try {
-        inputStream?.close()
-        outputStream?.println("disconnect")
-        outputStream?.close()
-        socket?.close()
-        UserLogged.isConected = false
+    Log.d(TAG_SOCKET, "Cerrando conexión...")
+
+    /*try {
+        if (outputStream != null && !outputStream!!.checkError()) {
+            Log.d(TAG_SOCKET, "Enviando 'disconnect'")
+            outputStream!!.println("disconnect")
+        } else {
+            Log.w(TAG_SOCKET, "No se envió 'disconnect': conexión rota o nula")
+        }
     } catch (e: IOException) {
-        Log.e(TAG_SOCKET, "Error al cerrar conexión: ${e.message}")
-    } finally {
-        socket.close()
-        UserLogged.isConected = false
+        Log.e(TAG_SOCKET, "Error al enviar 'disconnect': ${e.message}")
+    }*/
+
+/*    try {
+        Log.d(TAG_SOCKET, "Cerrando inputStream...")
+        inputStream?.close()
+    } catch (e: IOException) {
+        Log.e(TAG_SOCKET, "Error al cerrar inputStream: ${e.message}")
+    }*/
+
+   /* try {
+        Log.d(TAG_SOCKET, "Cerrando outputStream...")
+        outputStream?.close()
+    } catch (e: IOException) {
+        Log.e(TAG_SOCKET, "Error al cerrar outputStream: ${e.message}")
+    }*/
+
+    try {
+        Log.d(TAG_SOCKET, "Cerrando socket...")
+        socket?.close()
+    } catch (e: IOException) {
+        Log.e(TAG_SOCKET, "Error al cerrar socket: ${e.message}")
     }
+
+    UserLogged.isConected = false
+  /*  inputStream = null
+    outputStream = null
+    socket = null*/
+
+    Log.d(TAG_SOCKET, "Conexión cerrada y recursos limpiados.")
 }
 
 /*override fun onDestroy() {
     super.onDestroy()
-    try {
-        socket.close()
-    } catch (e: IOException) {
-       // log(TAG_SOCKET, "Error al cerrar socket: ${e.message}")
-    }
+    closeConnection()
 }*/

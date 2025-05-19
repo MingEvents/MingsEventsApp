@@ -48,6 +48,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import coil.compose.AsyncImage
+import com.example.mingseventsapp.R
 import com.example.mingseventsapp.Routes
 import com.example.mingseventsapp.UserLogged
 import com.example.mingseventsapp.model.chat.Chat
@@ -154,7 +155,12 @@ fun ChatPage(navController: NavHostController) {
 
 @Composable
 fun ChatItem(chat: Chat, usersList: List<User>, navController: NavHostController) {
-    val user = usersList.find { it.user_id == chat.user2_id }!!
+    var user = User()
+    if (UserLogged.user.user_id == chat.user1_id) {
+         user = usersList.find { it.user_id == chat.user2_id}!!
+    } else {
+         user = usersList.find {  it.user_id == chat.user1_id}!!
+    }
 
     Card(
         modifier = Modifier
@@ -219,7 +225,7 @@ fun ChatItem(chat: Chat, usersList: List<User>, navController: NavHostController
                     .align(Alignment.CenterVertically)
                ) {
                 AsyncImage(
-                    model = user.photo,
+                    model = user.photo ?: R.drawable.icon_default,
                     contentDescription = "Imagen del evento",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier

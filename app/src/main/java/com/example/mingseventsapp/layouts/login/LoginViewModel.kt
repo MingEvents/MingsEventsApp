@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 data class LoginFormState(
     val email: String = "",
     val password: String = "",
-    val isLoading: Boolean = false,
+    var isLoading: Boolean = false,
     val error: String? = null
 )
 
@@ -87,5 +87,6 @@ class LoginViewModel : ViewModel() {
 
     fun clearError() {
         _formState.value = _formState.value.copy(error = null)
+        _formState.value = formState.value.copy(isLoading = false)
     }
 }

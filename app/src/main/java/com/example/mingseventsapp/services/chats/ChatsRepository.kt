@@ -2,7 +2,6 @@
 package com.example.mingseventsapp.services.chats
 
 import com.example.mingseventsapp.model.chat.Chat
-import com.example.mingseventsapp.model.chat.ChatContainer
 import retrofit2.Response
 import com.example.togethernotes.Retrofit
 

@@ -42,7 +42,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.Dialog
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.example.mingseventsapp.Routes
 import com.example.mingseventsapp.UserLogged
 import com.example.mingseventsapp.model.event.Event
 import org.json.JSONObject
@@ -52,21 +54,11 @@ import java.io.PrintWriter
 import java.net.Socket
 import kotlin.math.log
 
-
-
-
-@Preview(showBackground = true)
-@Composable
-fun EventPagePreview() {
-    EventPage()
-}
-
-
-
 @SuppressLint("MutableCollectionMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EventPage() {
+fun EventPage(navController: NavHostController) {
+    UserLogged.selectedEvent = Event()
     var events = mutableListOf(
         Event(
             event_id = 1,
@@ -187,7 +179,7 @@ fun EventPage() {
             Spacer(modifier = Modifier.height(10.dp))
         }
         items(filteredEvents) { event ->
-            EventItem(event)
+            EventItem(event, navController)
         }
 
         item {
@@ -197,7 +189,7 @@ fun EventPage() {
 }
 
 @Composable
-fun EventItem(event: Event) {
+fun EventItem(event: Event, navController: NavHostController) {
     var showModal by remember { mutableStateOf(false) }
 
     if (showModal) {
@@ -248,7 +240,10 @@ fun EventItem(event: Event) {
                 modifier = Modifier.fillMaxWidth()
                ) {
                 Button(
-                    onClick = {/* Abrir pagina comprar entrada*/},
+                    onClick = {
+                        UserLogged.selectedEvent = event
+                        navController.navigate(Routes.BUYTICKET)
+                    },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFF14296F),
                         contentColor = Color.White

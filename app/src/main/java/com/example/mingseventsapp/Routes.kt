@@ -6,4 +6,5 @@ object Routes {
     const val MENU = "menu"
     const val CHAT = "chat"
     const val CHATCONV = "chat conv"
+    const val BUYTICKET = "buy ticket"
 }
