@@ -27,6 +27,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -59,71 +60,18 @@ import kotlin.math.log
 @Composable
 fun EventPage(navController: NavHostController) {
     UserLogged.selectedEvent = Event()
-    var events = mutableListOf(
-        Event(
-            event_id = 1,
-            name = "Festival de Música",
-            price = 50,
-            reserved_places = 120,
-            photo = "",
-            start_date = "2025-06-10",
-            end_date = "2025-06-12",
-            seating = 300,
-            descripcion = "Disfruta de los mejores artistas en vivo.",
-            establish_id = 1
-        ),
-        Event(
-            event_id = 2,
-            name = "Feria de Libros",
-            price = 0,
-            reserved_places = 80,
-            photo = "",
-            start_date = "2025-07-01",
-            end_date = "2025-07-03",
-            seating = 200,
-            descripcion = "Encuentra las mejores editoriales y autores.",
-            establish_id = 2
-        ),
-        Event(
-            event_id = 3,
-            name = "Conferencia de Tecnología",
-            price = 150,
-            reserved_places = 250,
-            photo = "",
-            start_date = "2025-08-20",
-            end_date = "2025-08-21",
-            seating = 400,
-            descripcion = "Innovación, IA, y futuro digital.",
-            establish_id = 3
-        ),
-        Event(
-            event_id = 4,
-            name = "Final champions Barça vs Arsenal",
-            price = 1050,
-            reserved_places = 1250,
-            photo = "",
-            start_date = "2025-08-20",
-            end_date = "2025-08-21",
-            seating = 400,
-            descripcion = "Innovación, IA, y futuro digital.",
-            establish_id = 3
-        ),
-        Event(
-            event_id = 5,
-            name = "Concierto Trueno y BadGyal",
-            price = 350,
-            reserved_places = 650,
-            photo = "",
-            start_date = "2025-08-20",
-            end_date = "2025-08-21",
-            seating = 400,
-            descripcion = "Innovación, IA, y futuro digital.",
-            establish_id = 3
-        ),
-    )
+    val eventViewModel = EventViewModel()
+    var events by remember { mutableStateOf<List<Event>>(emptyList()) }
+
+    LaunchedEffect(Unit) {
+        events = eventViewModel.getAllEvents()
+    }
+
 
     var filteredEvents by remember { mutableStateOf(events.toMutableList()) }
-
+    LaunchedEffect(events) {
+        filteredEvents = events.toMutableList()
+    }
     var searchString by remember { mutableStateOf("") }
     Box(
         modifier = Modifier
@@ -280,7 +228,7 @@ fun EventItem(event: Event, navController: NavHostController) {
                         .size(130.dp)
                 ) {
                 AsyncImage(
-                    model = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnS_M_rDC7mdZq0b-dRC_pWRHkxxGrbv85MA&s",
+                    model = "http://10.0.3.51/MingEventsApi/api/Event/${event.event_id}/Photo",
                     contentDescription = "Imagen del evento",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -316,7 +264,7 @@ fun ReadMoreModal(onClose: () -> Unit, event: Event) {
                     .padding(top = 10.dp)
                ) {
                 AsyncImage(
-                    model = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnS_M_rDC7mdZq0b-dRC_pWRHkxxGrbv85MA&s",
+                    model = "http://10.0.3.51/MingEventsApi/api/Event/${event.event_id}/Photo",
                     contentDescription = "Imagen del evento",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier

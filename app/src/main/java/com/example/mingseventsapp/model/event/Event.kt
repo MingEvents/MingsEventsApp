@@ -8,7 +8,7 @@ data class Event(
     val photo: String = "",
     val start_date: String = "",
     val end_date: String = "",
-    val seating: Int = 0,
+    val seating: Boolean = false,
     val descripcion: String = "",
     val establish_id: Int = 0
 )
