@@ -47,6 +47,7 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.mingseventsapp.Routes
 import com.example.mingseventsapp.UserLogged
+import com.example.mingseventsapp.model.ReserveTicket
 import com.example.mingseventsapp.model.event.Event
 import org.json.JSONObject
 import java.io.BufferedReader
@@ -191,6 +192,15 @@ fun EventItem(event: Event, navController: NavHostController) {
                     onClick = {
                         UserLogged.selectedEvent = event
                         navController.navigate(Routes.BUYTICKET)
+                        /*
+
+                        var ticket = ReserveTicket()
+                        ticket.event_id = event.event_id
+                        ticket.user_id = UserLogged.user.user_id
+                        val reserveTicket = ReserveTicketViewModel()
+                        reserveTicket.createReserveTicket(ticket)
+
+                         */
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFF14296F),
