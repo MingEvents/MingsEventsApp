@@ -2,7 +2,7 @@
 package com.example.mingseventsapp
 
 import com.example.mingseventsapp.model.user.User
-import com.example.togethernotes.Retrofit
+import com.example.mingseventsapp.Retrofit
 import retrofit2.Response
 
 class UserRepository {

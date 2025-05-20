@@ -3,7 +3,7 @@ package com.example.mingseventsapp.services.chats
 
 import com.example.mingseventsapp.model.chat.Chat
 import retrofit2.Response
-import com.example.togethernotes.Retrofit
+import com.example.mingseventsapp.Retrofit
 
 class ChatRepository {
 
