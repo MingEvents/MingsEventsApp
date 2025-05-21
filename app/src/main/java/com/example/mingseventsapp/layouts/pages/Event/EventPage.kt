@@ -210,7 +210,7 @@ fun EventItem(event: Event, navController: NavHostController) {
                         .height(40.dp)
                       ) {
                     Text(
-                        text = "Buy"
+                        text = "Buy",
                         )
                 }
                 Button(
