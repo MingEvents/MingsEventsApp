@@ -18,7 +18,6 @@ import kotlinx.coroutines.launch
 data class LoginFormState(
     val email: String = "",
     val password: String = "",
-    var isLoading: Boolean = false,
     val error: String? = null
 )
 
@@ -44,7 +43,6 @@ class LoginViewModel : ViewModel() {
     fun login(password: String, email: String) {
         val appRepository = UserRepository()
         viewModelScope.launch {
-            _formState.value = _formState.value.copy(isLoading = true)
             try {
                 val response = appRepository.login(email, password)
 
@@ -53,7 +51,6 @@ class LoginViewModel : ViewModel() {
                         response.body()?.let { loggedInApp ->
                             UserLogged.user = loggedInApp
                             showUserInfo(loggedInApp)
-                            _formState.value = _formState.value.copy(isLoading = false)
                             _navigateToMenu.emit(Unit)
 
                         } ?: run {
@@ -87,6 +84,5 @@ class LoginViewModel : ViewModel() {
 
     fun clearError() {
         _formState.value = _formState.value.copy(error = null)
-        _formState.value = formState.value.copy(isLoading = false)
     }
 }

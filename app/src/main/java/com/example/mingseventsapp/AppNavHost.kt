@@ -22,13 +22,12 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.mingseventsapp.layouts.login.LoginScreen
 import com.example.mingseventsapp.layouts.login.PutBackground
+import com.example.mingseventsapp.layouts.login.RegisterScreen
 import com.example.mingseventsapp.layouts.menu.HomeMenuContent
 import com.example.mingseventsapp.layouts.pages.Chat.ChatConv
 import com.example.mingseventsapp.layouts.pages.Chat.ChatPage
 import com.example.mingseventsapp.layouts.pages.Event.BuyTicket
-import com.example.mingseventsapp.layouts.register.RegisterScreen
 import com.example.mingseventsapp.model.user.User
-
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -50,7 +49,7 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
             HomeMenuContent(navController = navController, startIndex = startIndex)
         }
         composable(Routes.REGISTER) {
-            RegisterScreen()
+           RegisterScreen(navController)
         }
 
         composable(Routes.CHAT) {

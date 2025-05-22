@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,25 +41,36 @@ import com.example.mingseventsapp.Routes
 import com.example.mingseventsapp.UserLogged
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.example.mingseventsapp.model.Armchair
 import com.example.mingseventsapp.model.ReserveTicket
-import com.example.mingseventsapp.model.event.Event
+import androidx.compose.runtime.LaunchedEffect
 
-@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
 fun BuyTicket(navController: NavHostController) {
-    /*
-    val event = UserLogged.selectedEvent
-    val placesLeft = 3
-    val eventViewModel = EventViewModel()
-    val armchairViewModel = ArmchairViewModel()
-    val reserveTicketViewModel = ReserveTicketViewModel()
-    var cantidadEntradasList by remember { mutableStateOf<List<Armchair>>(emptyList()) }
-     cantidadEntradasList = armchairViewModel.getArmchairsByEstablishment(event.event_id)
-    var cantidadEntradas by remember { mutableStateOf(cantidadEntradasList.toMutableList()) }
+    var isLoading by remember { mutableStateOf(false) }
 
-    val asientosSeleccionados = remember { mutableStateListOf<Pair<Int, Int>>() }
-    val armchairsReserved = reserveTicketViewModel.getReserveadSeats(event.event_id)
+    val reserveTicketViewModel = ReserveTicketViewModel()
+    val armchairViewModel = ArmchairViewModel()
+    val event = UserLogged.selectedEvent
+    var availableSeats = 0
+    var ticketCount by remember { mutableStateOf(1) }
+    var selectedSeats = remember { mutableStateListOf<Armchair>() }
+    var reservedSeats: List<Armchair> = emptyList()
+    var totalArmchairs: List<Armchair> = emptyList()
+
+    LaunchedEffect(Unit) {
+        isLoading = true
+        reservedSeats = reserveTicketViewModel.getReservedSeats(UserLogged.selectedEvent.event_id)
+        totalArmchairs = armchairViewModel.loadArmchairsByEstablishment(UserLogged.selectedEvent.event_id)
+        availableSeats = totalArmchairs.size - reservedSeats.size
+        isLoading = false
+    }
+
+    if (isLoading) {
+        showLoadingDialog()
+    }
 
     Box(
         modifier = Modifier
@@ -101,7 +113,7 @@ fun BuyTicket(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Text("Selecciona la cantidad de entradas", fontWeight = FontWeight.Bold)
+            Text("Select number of tickets", fontWeight = FontWeight.Bold)
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -109,10 +121,10 @@ fun BuyTicket(navController: NavHostController) {
                ) {
                 Button(
                     onClick = {
-                        if (cantidadEntradas > 1) {
-                            cantidadEntradas--
-                            if (asientosSeleccionados.size > cantidadEntradas) {
-                                asientosSeleccionados.removeLast()
+                        if (ticketCount > 1) {
+                            ticketCount--
+                            if (selectedSeats.size > ticketCount) {
+                                selectedSeats.removeAt(selectedSeats.lastIndex)
                             }
                         }
                     },
@@ -123,14 +135,14 @@ fun BuyTicket(navController: NavHostController) {
                 }
 
                 Text(
-                    text = "$cantidadEntradas / $placesLeft",
+                    text = "$ticketCount / $availableSeats",
                     modifier = Modifier.padding(horizontal = 20.dp),
                     style = MaterialTheme.typography.titleMedium
                     )
 
                 Button(
                     onClick = {
-                        if (cantidadEntradas < placesLeft) cantidadEntradas++
+                        if (ticketCount < availableSeats) ticketCount++
                     },
                     shape = CircleShape,
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF405A94))
@@ -141,11 +153,10 @@ fun BuyTicket(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text("Selecciona tus asientos:", fontWeight = FontWeight.Bold)
+            Text("Select your seats:", fontWeight = FontWeight.Bold)
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Contenedor con scroll y borde
             Box(
                 modifier = Modifier
                     .width(300.dp)
@@ -155,19 +166,20 @@ fun BuyTicket(navController: NavHostController) {
                     .border(width = 2.dp, color = Color.Gray, shape = RoundedCornerShape(12.dp))
                     .padding(8.dp)
                ) {
-                val stateVertical = rememberScrollState()
-                val stateHorizontal = rememberScrollState()
+                val scrollVertical = rememberScrollState()
+                val scrollHorizontal = rememberScrollState()
 
                 Column(
                     modifier = Modifier
-                        .verticalScroll(stateVertical)
-                        .horizontalScroll(stateHorizontal)
+                        .verticalScroll(scrollVertical)
+                        .horizontalScroll(scrollHorizontal)
                       ) {
                     for (row in 0 until 10) {
                         Row {
                             for (col in 0 until 10) {
-                                val asiento = Pair(row, col)
-                                val seleccionado = asiento in asientosSeleccionados
+                                val seat = Armchair(0,row, col)
+                                val isReserved = reservedSeats.any { it.row == seat.row && it.column == seat.column }
+                                val isSelected = selectedSeats.any { it.row == seat.row && it.column == seat.column }
 
                                 Box(
                                     modifier = Modifier
@@ -176,24 +188,27 @@ fun BuyTicket(navController: NavHostController) {
                                         .clip(CircleShape)
                                         .background(
                                             when {
-                                                seleccionado -> Color(0xFF5CB85C)
-                                                else -> Color(0xFFB0C4DE)
+                                                isReserved -> Color.Red
+                                                isSelected -> Color.Green
+                                                else -> Color.LightGray
                                             }
                                                    )
-                                        .clickable {
-                                            if (seleccionado) {
-                                                asientosSeleccionados.remove(asiento)
-                                            } else if (asientosSeleccionados.size < cantidadEntradas) {
-                                                asientosSeleccionados.add(asiento)
+                                        .then(
+                                            if (isReserved) Modifier
+                                            else Modifier.clickable {
+                                                if (isSelected) {
+                                                    selectedSeats.remove(seat)
+                                                } else if (selectedSeats.size < ticketCount) {
+                                                    selectedSeats.add(seat)
+                                                }
                                             }
-                                        }
+                                             )
                                    )
                             }
                         }
                     }
                 }
 
-                // Opcional: línea visual de borde interior
                 Box(
                     modifier = Modifier
                         .matchParentSize()
@@ -203,15 +218,27 @@ fun BuyTicket(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(32.dp))
 
+            Text(
+                text = "Price: ${event.price * ticketCount}$",
+                fontSize = 25.sp,
+                fontWeight = FontWeight.Bold
+                )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
             Button(
                 onClick = {
-                    var ticket = ReserveTicket()
-                    ticket.event_id = event.event_id
-                    ticket.user_id = UserLogged.user.user_id
-                    val reserveTicket = ReserveTicketViewModel()
-                    reserveTicket.createReserveTicket(ticket)
-
-                    // lógica de compra aquí
+                    isLoading = true
+                    for (armchair in selectedSeats) {
+                        val ticket = ReserveTicket()
+                        ticket.event_id = UserLogged.selectedEvent.event_id
+                        ticket.user_id = UserLogged.user.user_id
+                        ticket.armchair_id = armchair.row_id
+                        ticket.reservation_date = UserLogged.selectedEvent.start_date
+                        val reserveTicketViewModel = ReserveTicketViewModel()
+                        reserveTicketViewModel.createReserveTicket(ticket)
+                        isLoading = false
+                    }
                 },
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF14296F)),
@@ -219,11 +246,20 @@ fun BuyTicket(navController: NavHostController) {
                     .fillMaxWidth(0.8f)
                     .height(50.dp)
                   ) {
-                Text("Comprar Entradas", color = Color.White, fontWeight = FontWeight.Bold)
+                Text("Buy Tickets", color = Color.White, fontWeight = FontWeight.Bold)
             }
         }
     }
-
-     */
 }
 
+@Composable
+fun showLoadingDialog() {
+    Dialog(onDismissRequest = { /* No se puede cerrar manualmente */ }) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+           ) {
+            CircularProgressIndicator(color = Color(0xFF14296F))
+        }
+    }
+}

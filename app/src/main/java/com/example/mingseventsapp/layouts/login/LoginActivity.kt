@@ -70,7 +70,7 @@ fun LoginScreen(viewModel: LoginViewModel = viewModel(),
                 navController: NavHostController,) {
 
     val state by viewModel.formState.collectAsState()
-    val localLoadingState = remember { mutableStateOf(state.isLoading) }
+    var isLoading by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.navigateToMenu.collect {
@@ -80,12 +80,11 @@ fun LoginScreen(viewModel: LoginViewModel = viewModel(),
         }
     }
 
-    if (state.isLoading) {
+    if (isLoading) {
         showLoadingDialog()
     }
 
     if (state.error != null) {
-        localLoadingState.value = false
         ErrorDialog(errorMessage = state.error!!, onDismiss = { viewModel.clearError() })
     }
     Column(
@@ -135,7 +134,7 @@ fun LoginScreen(viewModel: LoginViewModel = viewModel(),
 
         Button(
             onClick = {
-                state.isLoading = true
+                isLoading = true
                 viewModel.login(state.password,state.email)
                 viewModel.clearError()
                       },

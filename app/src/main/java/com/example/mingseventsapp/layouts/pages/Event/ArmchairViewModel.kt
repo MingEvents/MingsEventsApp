@@ -18,21 +18,19 @@ class ArmchairViewModel : ViewModel() {
     val armchairsState: StateFlow<List<Armchair>?> = _armchairsState
 
     // Método que carga las sillas usando viewModelScope
-    fun loadArmchairsByEstablishment(establishmentId: Int) {
-        viewModelScope.launch {
-            try {
-                val response = repository.getArmchairsByEstablishmentId(establishmentId)
+    suspend fun loadArmchairsByEstablishment(establishmentId: Int): List<Armchair> {
+        return try {
+            val response = repository.getArmchairsByEstablishmentId(establishmentId)
 
-                if (response.isSuccessful && !response.body().isNullOrEmpty()) {
-                    _armchairsState.value = response.body()
-                } else {
-                    Log.e("ArmchairViewModel", "No chairs found for establishment ID: $establishmentId")
-                    _armchairsState.value = emptyList()
-                }
-            } catch (e: Exception) {
-                Log.e("ArmchairViewModel", "Error loading armchairs: ${e.message}")
-                _armchairsState.value = emptyList()
+            if (response.isSuccessful && !response.body().isNullOrEmpty()) {
+                response.body()!!
+            } else {
+                Log.e("ArmchairViewModel", "No chairs found for establishment ID: $establishmentId")
+                emptyList()
             }
+        } catch (e: Exception) {
+            Log.e("ArmchairViewModel", "Error loading armchairs: ${e.message}")
+            emptyList()
         }
     }
 }

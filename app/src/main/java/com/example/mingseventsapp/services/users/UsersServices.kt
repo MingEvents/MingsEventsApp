@@ -24,7 +24,7 @@ interface UserService {
 
     // POST: api/Users
     @POST("api/Users")
-    suspend fun createUser(@Body user: User): Response<User>
+    suspend fun createUser(@Body user: User): Response<Int>
 
     // PUT: api/Users/{id}
     @PUT("api/Users/{id}")

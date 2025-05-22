@@ -6,9 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.mingseventsapp.model.Armchair
 import com.example.mingseventsapp.model.ReserveTicket
 import com.example.mingseventsapp.services.tickets.ReserveTicketRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ReserveTicketViewModel: ViewModel() {
     val reserveTicketRepository = ReserveTicketRepository()
@@ -32,24 +34,21 @@ class ReserveTicketViewModel: ViewModel() {
         }
     }
 
-    fun getReserveadSeats(eventId: Int): List<Armchair> {
-        val reservedSeatsState = MutableStateFlow<List<Armchair>?>(null)
-
-        viewModelScope.launch {
+    suspend fun getReservedSeats(eventId: Int): List<Armchair> {
+        return withContext(Dispatchers.IO) {
             try {
                 val response = reserveTicketRepository.getReservedSeatsByEvent(eventId)
                 if (response.isSuccessful && !response.body().isNullOrEmpty()) {
-                    reservedSeatsState.value = response.body()
+                    response.body()!!
                 } else {
                     Log.e("SeatViewModel", "No reserved seats found")
-                    reservedSeatsState.value = emptyList()
+                    emptyList()
                 }
             } catch (e: Exception) {
                 Log.e("SeatViewModel", "Error fetching reserved seats: ${e.message}")
-                reservedSeatsState.value = emptyList()
+                emptyList()
             }
         }
-        return  reservedSeatsState.value ?: emptyList()
     }
 
 }

@@ -87,7 +87,7 @@ fun ProfilePage() {
               ) {
 
             AsyncImage(
-                model = "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png ",
+                model = "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png",
                 contentDescription = "Profile Picture",
                 modifier = Modifier
                     .size(200.dp)

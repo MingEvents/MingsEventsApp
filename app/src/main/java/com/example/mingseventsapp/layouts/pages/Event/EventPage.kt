@@ -22,12 +22,14 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,83 +58,77 @@ import java.io.PrintWriter
 import java.net.Socket
 import kotlin.math.log
 
-@SuppressLint("MutableCollectionMutableState")
+@SuppressLint("MutableCollectionMutableState", "UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EventPage(navController: NavHostController) {
     UserLogged.selectedEvent = Event()
     val eventViewModel = EventViewModel()
+    var isLoading by remember { mutableStateOf(true) }
     var events by remember { mutableStateOf<List<Event>>(emptyList()) }
 
     LaunchedEffect(Unit) {
         events = eventViewModel.getAllEvents()
+        isLoading = false
     }
 
-
-    var filteredEvents by remember { mutableStateOf(events.toMutableList()) }
-    LaunchedEffect(events) {
-        filteredEvents = events.toMutableList()
-    }
-    var searchString by remember { mutableStateOf("") }
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFFd7e9fc)),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(vertical = 40.dp, horizontal = 0.dp),
-            horizontalAlignment = Alignment.Start,
-        ) {
-            Text(
-                text = "Events",
-                fontSize = 40.sp,
-                modifier = Modifier.padding(start = 16.dp, bottom = 8.dp)
-            )
-            Divider(color = Color.Black, thickness = 1.dp)
+    if (isLoading) {
+        showLoadingDialog(isLoading = remember { mutableStateOf(true) })
+    } else {
+        var filteredEvents by remember { mutableStateOf(events.toMutableList()) }
+        LaunchedEffect(events) {
+            filteredEvents = events.toMutableList()
         }
-    }
-
-    Box(
-        modifier = Modifier
-            .padding(top = 130.dp, start = 16.dp, end = 16.dp)
-            .fillMaxWidth()
-            .wrapContentHeight()
-    ) {
-        SearchBar (
-            query = searchString,
-            onQueryChange = {
-                searchString = it
-                filteredEvents = events.filter { e ->
-                    e.name.contains(it, ignoreCase = true)
-                }.toMutableList()
-                            },
-            onSearch = {},
-            active = false,
-            onActiveChange = {},
-            shape = RoundedCornerShape(12.dp),
-            modifier = Modifier
-                .fillMaxWidth(),
-            placeholder = { Text("Search events") }
-        ) {}
-    }
-
-    LazyColumn(
-        modifier = Modifier
-            .padding(top = 230.dp)
-            .fillMaxHeight()
-    ) {
-        item {
-            Spacer(modifier = Modifier.height(10.dp))
-        }
-        items(filteredEvents) { event ->
-            EventItem(event, navController)
+        var searchString by remember { mutableStateOf("") }
+        Box(
+            modifier = Modifier.fillMaxSize().background(Color(0xFFd7e9fc)),
+            contentAlignment = Alignment.Center
+           ) {
+            Column(
+                modifier = Modifier.fillMaxSize().padding(vertical = 40.dp, horizontal = 0.dp),
+                horizontalAlignment = Alignment.Start,
+                  ) {
+                Text(
+                    text = "Events",
+                    fontSize = 40.sp,
+                    modifier = Modifier.padding(start = 16.dp, bottom = 8.dp)
+                    )
+                Divider(color = Color.Black, thickness = 1.dp)
+            }
         }
 
-        item {
-            Spacer(modifier = Modifier.height(100.dp))
+        Box(
+            modifier = Modifier.padding(top = 130.dp, start = 16.dp, end = 16.dp).fillMaxWidth()
+                .wrapContentHeight()
+           ) {
+            SearchBar(query = searchString,
+                      onQueryChange = {
+                          searchString = it
+                          filteredEvents = events.filter { e ->
+                              e.name.contains(it, ignoreCase = true)
+                          }.toMutableList()
+                      },
+                      onSearch = {},
+                      active = false,
+                      onActiveChange = {},
+                      shape = RoundedCornerShape(12.dp),
+                      modifier = Modifier.fillMaxWidth(),
+                      placeholder = { Text("Search events") }) {}
+        }
+
+        LazyColumn(
+            modifier = Modifier.padding(top = 230.dp).fillMaxHeight()
+                  ) {
+            item {
+                Spacer(modifier = Modifier.height(10.dp))
+            }
+            items(filteredEvents) { event ->
+                EventItem(event, navController)
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(100.dp))
+            }
         }
     }
 }
@@ -192,15 +188,7 @@ fun EventItem(event: Event, navController: NavHostController) {
                     onClick = {
                         UserLogged.selectedEvent = event
                         navController.navigate(Routes.BUYTICKET)
-                        /*
 
-                        var ticket = ReserveTicket()
-                        ticket.event_id = event.event_id
-                        ticket.user_id = UserLogged.user.user_id
-                        val reserveTicket = ReserveTicketViewModel()
-                        reserveTicket.createReserveTicket(ticket)
-
-                         */
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFF14296F),
@@ -353,6 +341,23 @@ fun ReadMoreModal(onClose: () -> Unit, event: Event) {
                     )
 
             }
+        }
+    }
+}
+
+@Composable
+fun showLoadingDialog(isLoading: MutableState<Boolean>) {
+    Dialog(
+        onDismissRequest = { isLoading.value = false }
+          ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+           ) {
+            CircularProgressIndicator(
+                color = Color(0xFF14296F)
+                                     )
         }
     }
 }

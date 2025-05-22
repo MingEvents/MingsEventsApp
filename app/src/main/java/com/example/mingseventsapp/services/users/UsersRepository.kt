@@ -19,7 +19,7 @@ class UserRepository {
         return userService.getUserById(id)
     }
 
-    suspend fun createUser(user: User): Response<User> {
+    suspend fun createUser(user: User): Response<Int> {
         return userService.createUser(user)
     }
 
