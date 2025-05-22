@@ -2,6 +2,7 @@
 package com.example.mingseventsapp.services.tickets
 
 
+import com.example.mingseventsapp.model.Armchair
 import com.example.mingseventsapp.model.ReserveTicket
 import retrofit2.Response
 import retrofit2.http.*
@@ -44,4 +45,8 @@ public interface ReserveTicketService {
         @Path("user_id") userId: Int,
         @Path("event_id") eventId: Int
                                    ): Response<ReserveTicket>
+
+    // GET: api/ReserveTicket/ReservedSeatsByEvent/{event_id}
+    @GET("api/ReserveTicket/ReservedSeatsByEvent/{event_id}")
+    suspend fun getReservedSeatsByEvent(@Path("event_id") eventId: Int): Response<List<Armchair>>
 }

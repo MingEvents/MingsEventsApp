@@ -2,6 +2,7 @@
 package com.example.mingseventsapp.services.tickets
 
 import com.example.mingseventsapp.Retrofit
+import com.example.mingseventsapp.model.Armchair
 import com.example.mingseventsapp.model.ReserveTicket
 import retrofit2.Response
 
@@ -52,5 +53,8 @@ class ReserveTicketRepository {
         eventId: Int
                                    ): Response<ReserveTicket> {
         return reserveTicketService.deleteReserveTicket(armchairId, userId, eventId)
+    }
+    suspend fun getReservedSeatsByEvent(eventId: Int): Response<List<Armchair>> {
+        return reserveTicketService.getReservedSeatsByEvent(eventId)
     }
 }

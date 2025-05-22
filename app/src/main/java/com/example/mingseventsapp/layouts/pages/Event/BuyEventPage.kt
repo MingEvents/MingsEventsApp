@@ -40,15 +40,25 @@ import com.example.mingseventsapp.Routes
 import com.example.mingseventsapp.UserLogged
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.shadow
+import com.example.mingseventsapp.model.Armchair
+import com.example.mingseventsapp.model.ReserveTicket
+import com.example.mingseventsapp.model.event.Event
 
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
 fun BuyTicket(navController: NavHostController) {
+    /*
     val event = UserLogged.selectedEvent
     val placesLeft = 3
-    var cantidadEntradas by remember { mutableStateOf(1) }
+    val eventViewModel = EventViewModel()
+    val armchairViewModel = ArmchairViewModel()
+    val reserveTicketViewModel = ReserveTicketViewModel()
+    var cantidadEntradasList by remember { mutableStateOf<List<Armchair>>(emptyList()) }
+     cantidadEntradasList = armchairViewModel.getArmchairsByEstablishment(event.event_id)
+    var cantidadEntradas by remember { mutableStateOf(cantidadEntradasList.toMutableList()) }
+
     val asientosSeleccionados = remember { mutableStateListOf<Pair<Int, Int>>() }
-    val armchairsReserved: Pair<Int, Int>
+    val armchairsReserved = reserveTicketViewModel.getReserveadSeats(event.event_id)
 
     Box(
         modifier = Modifier
@@ -195,6 +205,12 @@ fun BuyTicket(navController: NavHostController) {
 
             Button(
                 onClick = {
+                    var ticket = ReserveTicket()
+                    ticket.event_id = event.event_id
+                    ticket.user_id = UserLogged.user.user_id
+                    val reserveTicket = ReserveTicketViewModel()
+                    reserveTicket.createReserveTicket(ticket)
+
                     // lógica de compra aquí
                 },
                 shape = RoundedCornerShape(12.dp),
@@ -207,6 +223,7 @@ fun BuyTicket(navController: NavHostController) {
             }
         }
     }
-}
 
+     */
+}
 
