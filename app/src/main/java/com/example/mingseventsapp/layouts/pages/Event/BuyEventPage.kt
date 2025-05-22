@@ -20,11 +20,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -46,25 +48,33 @@ import androidx.compose.ui.window.Dialog
 import com.example.mingseventsapp.model.Armchair
 import com.example.mingseventsapp.model.ReserveTicket
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
+
 
 @Composable
 fun BuyTicket(navController: NavHostController) {
+    val coroutineScope = rememberCoroutineScope()
     var isLoading by remember { mutableStateOf(false) }
 
     val reserveTicketViewModel = ReserveTicketViewModel()
     val armchairViewModel = ArmchairViewModel()
     val event = UserLogged.selectedEvent
-    var availableSeats = 0
+    var availableSeats by remember { mutableStateOf(0) }
     var ticketCount by remember { mutableStateOf(1) }
     var selectedSeats = remember { mutableStateListOf<Armchair>() }
-    var reservedSeats: List<Armchair> = emptyList()
-    var totalArmchairs: List<Armchair> = emptyList()
+    var reservedSeats by remember { mutableStateOf<List<Armchair>>(emptyList()) }
+    var totalArmchairs by remember { mutableStateOf<List<Armchair>>(emptyList()) }
+    var totalRows by remember { mutableStateOf(0) }
+    var totalColumns by remember { mutableStateOf(0) }
 
     LaunchedEffect(Unit) {
         isLoading = true
         reservedSeats = reserveTicketViewModel.getReservedSeats(UserLogged.selectedEvent.event_id)
-        totalArmchairs = armchairViewModel.loadArmchairsByEstablishment(UserLogged.selectedEvent.event_id)
+        totalArmchairs = armchairViewModel.loadArmchairsByEstablishment(UserLogged.selectedEvent.establish_id)
         availableSeats = totalArmchairs.size - reservedSeats.size
+        totalRows = totalArmchairs.size/2
+        totalColumns = totalRows
         isLoading = false
     }
 
@@ -174,12 +184,12 @@ fun BuyTicket(navController: NavHostController) {
                         .verticalScroll(scrollVertical)
                         .horizontalScroll(scrollHorizontal)
                       ) {
-                    for (row in 0 until 10) {
+                    for (row in 1 until totalRows) {
                         Row {
-                            for (col in 0 until 10) {
+                            for (col in 1 until totalColumns) {
                                 val seat = Armchair(0,row, col)
-                                val isReserved = reservedSeats.any { it.row == seat.row && it.column == seat.column }
-                                val isSelected = selectedSeats.any { it.row == seat.row && it.column == seat.column }
+                                val isReserved = reservedSeats.any { it.rows == seat.rows && it.columns == seat.columns }
+                                val isSelected = selectedSeats.any { it.rows == seat.rows && it.columns == seat.columns }
 
                                 Box(
                                     modifier = Modifier
@@ -193,16 +203,15 @@ fun BuyTicket(navController: NavHostController) {
                                                 else -> Color.LightGray
                                             }
                                                    )
-                                        .then(
-                                            if (isReserved) Modifier
-                                            else Modifier.clickable {
-                                                if (isSelected) {
-                                                    selectedSeats.remove(seat)
-                                                } else if (selectedSeats.size < ticketCount) {
-                                                    selectedSeats.add(seat)
-                                                }
+                                        .then(if (isReserved) Modifier
+                                              else Modifier.clickable {
+                                            if (isSelected) {
+                                                selectedSeats.remove(seat)
+                                            } else if (selectedSeats.size < ticketCount) {
+                                                val seatAdd: Armchair = totalArmchairs.find { it.rows == seat.rows && it.columns == seat.columns }!!
+                                                selectedSeats.add(seatAdd)
                                             }
-                                             )
+                                        })
                                    )
                             }
                         }
@@ -233,11 +242,19 @@ fun BuyTicket(navController: NavHostController) {
                         val ticket = ReserveTicket()
                         ticket.event_id = UserLogged.selectedEvent.event_id
                         ticket.user_id = UserLogged.user.user_id
-                        ticket.armchair_id = armchair.row_id
+                        ticket.armchair_id = armchair.armchair_id
                         ticket.reservation_date = UserLogged.selectedEvent.start_date
                         val reserveTicketViewModel = ReserveTicketViewModel()
-                        reserveTicketViewModel.createReserveTicket(ticket)
-                        isLoading = false
+                        coroutineScope.launch {
+                            var reserveTicket: ReserveTicket = reserveTicketViewModel.createReserveTicket(ticket)!!
+
+                            if (reserveTicket != null) {
+                              //  SuccessDialog(onDismiss = Unit)
+                                isLoading = false
+                            }
+
+                        }
+
                     }
                 },
                 shape = RoundedCornerShape(12.dp),
@@ -262,4 +279,20 @@ fun showLoadingDialog() {
             CircularProgressIndicator(color = Color(0xFF14296F))
         }
     }
+}
+
+@Composable
+fun SuccessDialog(
+    onDismiss: () -> Unit
+                 ) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = "Success") },
+        text = { Text(text = "Operation completed successfully!") },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text("OK")
+            }
+        }
+               )
 }

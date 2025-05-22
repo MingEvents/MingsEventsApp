@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.mingseventsapp.model.Armchair
 import com.example.mingseventsapp.model.ReserveTicket
 import com.example.mingseventsapp.services.tickets.ReserveTicketRepository
+import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,21 +16,16 @@ import kotlinx.coroutines.withContext
 class ReserveTicketViewModel: ViewModel() {
     val reserveTicketRepository = ReserveTicketRepository()
 
-    fun createReserveTicket(ticket: ReserveTicket) {
-
-        val _reserveTicketState = MutableStateFlow<ReserveTicket?>(null)
-        viewModelScope.launch {
+    suspend fun createReserveTicket(ticket: ReserveTicket): ReserveTicket? {
+        return withContext(viewModelScope.coroutineContext + Dispatchers.IO) {
             try {
+                val json = Gson().toJson(ticket)
+                println(json)
                 val response = reserveTicketRepository.createReserveTicket(ticket)
-                if (response.isSuccessful && response.body() != null) {
-                    _reserveTicketState.value = response.body()
-                } else {
-                    _reserveTicketState.value = null
-                    Log.e("createReserveTicket", "Response not successful")
-                }
+                response.body()
             } catch (e: Exception) {
                 e.printStackTrace()
-                _reserveTicketState.value = null
+                null
             }
         }
     }
@@ -38,12 +34,8 @@ class ReserveTicketViewModel: ViewModel() {
         return withContext(Dispatchers.IO) {
             try {
                 val response = reserveTicketRepository.getReservedSeatsByEvent(eventId)
-                if (response.isSuccessful && !response.body().isNullOrEmpty()) {
                     response.body()!!
-                } else {
-                    Log.e("SeatViewModel", "No reserved seats found")
-                    emptyList()
-                }
+
             } catch (e: Exception) {
                 Log.e("SeatViewModel", "Error fetching reserved seats: ${e.message}")
                 emptyList()

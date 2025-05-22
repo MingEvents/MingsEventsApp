@@ -22,12 +22,7 @@ class ArmchairViewModel : ViewModel() {
         return try {
             val response = repository.getArmchairsByEstablishmentId(establishmentId)
 
-            if (response.isSuccessful && !response.body().isNullOrEmpty()) {
-                response.body()!!
-            } else {
-                Log.e("ArmchairViewModel", "No chairs found for establishment ID: $establishmentId")
-                emptyList()
-            }
+            response.body()!!
         } catch (e: Exception) {
             Log.e("ArmchairViewModel", "Error loading armchairs: ${e.message}")
             emptyList()

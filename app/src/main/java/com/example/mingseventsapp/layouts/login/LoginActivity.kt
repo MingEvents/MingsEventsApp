@@ -85,6 +85,7 @@ fun LoginScreen(viewModel: LoginViewModel = viewModel(),
     }
 
     if (state.error != null) {
+        isLoading = false
         ErrorDialog(errorMessage = state.error!!, onDismiss = { viewModel.clearError() })
     }
     Column(
