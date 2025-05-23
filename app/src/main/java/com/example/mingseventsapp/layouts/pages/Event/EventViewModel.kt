@@ -9,12 +9,13 @@ import com.example.mingseventsapp.UserLogged
 import com.example.mingseventsapp.model.ReserveTicket
 import com.example.mingseventsapp.model.chat.Chat
 import com.example.mingseventsapp.model.event.Event
+import com.example.mingseventsapp.services.armchairs.ArmchairRepository
 import com.example.mingseventsapp.services.chats.ChatRepository
 import com.example.mingseventsapp.services.events.EventRepository
 import com.example.mingseventsapp.services.tickets.ReserveTicketRepository
 import kotlinx.coroutines.launch
 
-class EventViewModel{
+class EventViewModel : ViewModel(){
 
     suspend fun getAllEvents(): List<Event> {
         val chatRepository = EventRepository()

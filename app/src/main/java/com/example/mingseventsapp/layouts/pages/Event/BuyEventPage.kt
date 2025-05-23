@@ -1,6 +1,7 @@
 package com.example.mingseventsapp.layouts.pages.Event
 
 import android.os.Build
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -49,7 +50,10 @@ import com.example.mingseventsapp.model.Armchair
 import com.example.mingseventsapp.model.ReserveTicket
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.launch
+import kotlin.math.ceil
+import kotlin.math.sqrt
 
 
 @Composable
@@ -67,14 +71,17 @@ fun BuyTicket(navController: NavHostController) {
     var totalArmchairs by remember { mutableStateOf<List<Armchair>>(emptyList()) }
     var totalRows by remember { mutableStateOf(0) }
     var totalColumns by remember { mutableStateOf(0) }
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         isLoading = true
         reservedSeats = reserveTicketViewModel.getReservedSeats(UserLogged.selectedEvent.event_id)
         totalArmchairs = armchairViewModel.loadArmchairsByEstablishment(UserLogged.selectedEvent.establish_id)
         availableSeats = totalArmchairs.size - reservedSeats.size
-        totalRows = totalArmchairs.size/2
-        totalColumns = totalRows
+        val capacity = totalArmchairs.size
+        val size = ceil(sqrt(capacity.toDouble())).toInt()
+        totalRows = size
+        totalColumns = size
         isLoading = false
     }
 
@@ -238,6 +245,7 @@ fun BuyTicket(navController: NavHostController) {
             Button(
                 onClick = {
                     isLoading = true
+
                     for (armchair in selectedSeats) {
                         val ticket = ReserveTicket()
                         ticket.event_id = UserLogged.selectedEvent.event_id
@@ -246,13 +254,10 @@ fun BuyTicket(navController: NavHostController) {
                         ticket.reservation_date = UserLogged.selectedEvent.start_date
                         val reserveTicketViewModel = ReserveTicketViewModel()
                         coroutineScope.launch {
-                            var reserveTicket: ReserveTicket = reserveTicketViewModel.createReserveTicket(ticket)!!
-
-                            if (reserveTicket != null) {
-                              //  SuccessDialog(onDismiss = Unit)
-                                isLoading = false
-                            }
-
+                            var reserveTicket: ReserveTicket? = reserveTicketViewModel.createReserveTicket(ticket)
+                            isLoading = false
+                            Toast.makeText(context, "Ticket purchased successfully!", Toast.LENGTH_SHORT).show()
+                            navController.navigate(Routes.MENU + "/0")
                         }
 
                     }
@@ -279,20 +284,4 @@ fun showLoadingDialog() {
             CircularProgressIndicator(color = Color(0xFF14296F))
         }
     }
-}
-
-@Composable
-fun SuccessDialog(
-    onDismiss: () -> Unit
-                 ) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(text = "Success") },
-        text = { Text(text = "Operation completed successfully!") },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text("OK")
-            }
-        }
-               )
 }

@@ -58,7 +58,7 @@ class LoginViewModel : ViewModel() {
                     }
 
                     response.code() == 404 -> {
-
+                        _formState.value = _formState.value.copy(error = "Usuario o contraseña incorrectos")
                     }
 
                     else -> {

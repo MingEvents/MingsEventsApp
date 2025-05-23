@@ -225,7 +225,7 @@ fun ChatItem(chat: Chat, usersList: List<User>, navController: NavHostController
                     .align(Alignment.CenterVertically)
                ) {
                 AsyncImage(
-                    model = user.photo ?: R.drawable.icon_default,
+                    model = R.drawable.icon_default,
                     contentDescription = "Imagen del evento",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier

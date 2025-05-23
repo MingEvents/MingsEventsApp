@@ -17,7 +17,6 @@ class ReserveTicketRepository {
         return reserveTicketService.getAllReserveTickets()
     }
 
-    // Obtener reserva por IDs
     suspend fun getReserveTicket(
         armchairId: Int,
         userId: Int,

@@ -5,9 +5,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 object Retrofit {
     object IP{
-        const val IP = "10.0.3.51"
+        const val IP = "192.168.56.1"
     }
-    private const val BASE_URL = "http://10.0.3.51/MingEventsApi/"
+    private const val BASE_URL = "http://192.168.56.1/MingEventsApi/"
     private val retrofit: Retrofit by lazy {
         val gson = GsonBuilder()
             .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")

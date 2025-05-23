@@ -3,6 +3,7 @@ package com.example.mingseventsapp.layouts.login
 import LoginViewModel
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -32,6 +33,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.window.Dialog
@@ -68,6 +70,7 @@ fun PutBackground(content: @Composable () -> Unit) {
 @Composable
 fun LoginScreen(viewModel: LoginViewModel = viewModel(),
                 navController: NavHostController,) {
+    val context = LocalContext.current
 
     val state by viewModel.formState.collectAsState()
     var isLoading by remember { mutableStateOf(false) }
@@ -86,7 +89,8 @@ fun LoginScreen(viewModel: LoginViewModel = viewModel(),
 
     if (state.error != null) {
         isLoading = false
-        ErrorDialog(errorMessage = state.error!!, onDismiss = { viewModel.clearError() })
+        viewModel.clearError()
+        Toast.makeText(context, "User or password incorrect", Toast.LENGTH_SHORT).show()
     }
     Column(
         modifier = Modifier
@@ -173,19 +177,3 @@ fun showLoadingDialog() {
     }
 }
 
-@Composable
-fun ErrorDialog(
-    errorMessage: String,
-    onDismiss: () -> Unit
-               ) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(text = "Error") },
-        text = { Text(text = errorMessage) },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Aceptar")
-            }
-        }
-               )
-}

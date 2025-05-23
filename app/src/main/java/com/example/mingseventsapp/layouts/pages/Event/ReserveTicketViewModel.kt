@@ -1,5 +1,6 @@
 package com.example.mingseventsapp.layouts.pages.Event
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -30,14 +31,29 @@ class ReserveTicketViewModel: ViewModel() {
         }
     }
 
+    @SuppressLint("SuspiciousIndentation")
     suspend fun getReservedSeats(eventId: Int): List<Armchair> {
         return withContext(Dispatchers.IO) {
             try {
                 val response = reserveTicketRepository.getReservedSeatsByEvent(eventId)
-                    response.body()!!
+                response.body()!!
 
             } catch (e: Exception) {
                 Log.e("SeatViewModel", "Error fetching reserved seats: ${e.message}")
+                emptyList()
+            }
+        }
+    }
+
+    @SuppressLint("SuspiciousIndentation")
+    suspend fun getReserveTicketsByUserId(user_id: Int): List<ReserveTicket> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = reserveTicketRepository.getReserveTicketsByUserId(user_id)
+                response.body()!!
+
+            } catch (e: Exception) {
+                Log.e("SeatViewModel", "Error fetching reserved tickets: ${e.message}")
                 emptyList()
             }
         }

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -47,6 +48,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.example.mingseventsapp.R
+import com.example.mingseventsapp.Retrofit
 import com.example.mingseventsapp.Routes
 import com.example.mingseventsapp.UserLogged
 import com.example.mingseventsapp.model.ReserveTicket
@@ -226,7 +229,7 @@ fun EventItem(event: Event, navController: NavHostController) {
                         .size(130.dp)
                 ) {
                 AsyncImage(
-                    model = "http://10.0.3.51/MingEventsApi/api/Event/${event.event_id}/Photo",
+                    model = R.drawable.event,
                     contentDescription = "Imagen del evento",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -238,108 +241,87 @@ fun EventItem(event: Event, navController: NavHostController) {
          }
     }
 }
-//   val context = LocalContext.current
-// val file = File(context.filesDir, event.photo)
 @Composable
 fun ReadMoreModal(onClose: () -> Unit, event: Event) {
-
-    Dialog(
-        onDismissRequest = { onClose() }
-          ) {
-        Box(
+    Dialog(onDismissRequest = { onClose() }) {
+        Column(
             modifier = Modifier
-                .height(600.dp)
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(15.dp))
                 .background(Color(0xFFD7E9FC))
-           ) {
+                .padding(16.dp)
+        ) {
+
             Box(
                 modifier = Modifier
-                    .width(300.dp)
-                    .height(200.dp)
+                    .fillMaxWidth()
+                    .aspectRatio(16f / 9f)
                     .clip(RoundedCornerShape(15.dp))
-                    .align(Alignment.TopCenter)
-                    .padding(top = 10.dp)
-               ) {
+                    .background(Color.LightGray)
+            ) {
                 AsyncImage(
-                    model = "http://10.0.3.51/MingEventsApi/api/Event/${event.event_id}/Photo",
+                    model = R.drawable.event,
                     contentDescription = "Imagen del evento",
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(RoundedCornerShape(15.dp))
-                          )
+                    modifier = Modifier.fillMaxSize()
+                )
             }
-            Column (
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 220.dp, start = 20.dp, end = 20.dp)
-                    .height(110.dp)
                     .clip(RoundedCornerShape(12.dp))
-                    .background(Color(0xFF7796cb))
-                   ) {
-                Text (
+                    .background(Color(0xFF7796CB))
+                    .padding(16.dp)
+            ) {
+                Text(
                     text = event.name,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Left,
-                    color = Color.White,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 20.dp, start = 20.dp, end = 20.dp)
-                    )
+                    color = Color.White
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = event.start_date + " - " + event.end_date,
+                    text = "${event.start_date} - ${event.end_date}",
                     fontSize = 15.sp,
-                    textAlign = TextAlign.Left,
-                    color = Color.White,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 10.dp, start = 20.dp, end = 20.dp)
-                    )
+                    color = Color.White
+                )
 
                 Text(
                     text = "España, Barcelona",
                     fontSize = 15.sp,
-                    textAlign = TextAlign.Left,
-                    color = Color.White,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 5.dp, start = 20.dp, end = 20.dp)
-                    )
-
+                    color = Color.White
+                )
             }
 
-            Column (
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 350.dp, start = 20.dp, end = 20.dp)
                     .clip(RoundedCornerShape(12.dp))
-                    .background(Color(0xFF7796cb))
-                   ) {
-
-                Text (
+                    .background(Color(0xFF7796CB))
+                    .padding(16.dp)
+            ) {
+                Text(
                     text = "Description",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Left,
-                    color = Color.White,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 20.dp, start = 20.dp, end = 20.dp)
-                     )
+                    color = Color.White
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
                     text = event.descripcion,
                     fontSize = 15.sp,
-                    textAlign = TextAlign.Left,
                     color = Color.White,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 5.dp, start = 20.dp, end = 20.dp, bottom = 20.dp)
-                    )
-
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
         }
     }

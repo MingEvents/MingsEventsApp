@@ -65,7 +65,7 @@ fun ContentScreen(modifier: Modifier, selectedIndex: Int, navController: NavHost
         0 -> EventPage(navController)
         1 -> ChatPage(navController)
         2 -> CartPage()
-        3 -> ProfilePage()
+        3 -> ProfilePage(navController)
     }
 
 }

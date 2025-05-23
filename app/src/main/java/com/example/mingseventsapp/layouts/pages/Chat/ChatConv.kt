@@ -156,7 +156,7 @@ fun ChatConv(navController: NavHostController) {
                    .padding(start = 40.dp)
               ) {
                AsyncImage(
-                   model = UserLogged.selectedUserChat.photo ?: R.drawable.icon_default,
+                   model = R.drawable.icon_default,
                    contentDescription = "Imagen del evento",
                    contentScale = ContentScale.Crop,
                    modifier = Modifier
